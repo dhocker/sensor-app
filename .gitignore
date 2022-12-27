@@ -1,0 +1,10 @@
+*.pyc
+*.log
+copy_to_*
+sensor_app.conf
+sensor_app.log*
+*.json
+Thumbs.db
+.idea/
+.DS_Store
+.vscode
