@@ -1,6 +1,6 @@
 #
 # settings_frame.py - app settings
-# Copyright © 2022 Dave Hocker (email: AtHomeX10@gmail.com)
+# Copyright © 2023 Dave Hocker (email: AtHomeX10@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,202 +17,13 @@
 
 
 import datetime
-from tkinter import Tk, Button, Label, Entry, Frame, LabelFrame, Checkbutton, IntVar, StringVar
+from tkinter import Tk, Button, Label, Entry, Frame, LabelFrame, Checkbutton, IntVar, StringVar, Listbox, Scrollbar
+from tkinter import LEFT, RIGHT, BOTTOM, END, BOTH, VERTICAL, DISABLED, NORMAL
 from tkinter import font
-from tkinter.ttk import Combobox
+from tkinter.simpledialog import askstring
+from custom_widgets import *
 from configuration import Configuration
 import logging
-
-
-class LabeledCheckboxWidget:
-    """
-    A compound label + checkbox widget
-    """
-    def __init__(self, parent, label="", value=None, row=0, column=0):
-        """
-        A checkbox with leading label
-        :param parent:
-        :param label:
-        :param value: The string "true or "false"
-        :param row:
-        :param column:
-        :return:
-        """
-        self._lbl = Label(parent, text=label)
-        self._lbl.grid(row=row, column=column, padx=3, sticky="e")
-        self._var = IntVar()
-        self._var.set(value == "true")
-        self._control = Checkbutton(parent, text="", variable=self._var, width=6, bd=2)
-        self._control.grid(row=row, column=column+1, padx=3, pady=3, sticky="w")
-
-    def get(self):
-        """
-        Returns the check value as the string true or false
-        :return:
-        """
-        v = self._var.get()
-        if v:
-            return "true"
-        return "false"
-
-    def focus(self):
-        """
-        Set the focus on this control. Used to handle input errors.
-        :return:
-        """
-        self._control.focus()
-
-
-class LabeledStringWidget:
-    """
-    A compound label + string entry widget
-    """
-    def __init__(self, parent, label="", value="", row=0, column=0):
-        """
-        An integer input widget with leading label
-        :param parent:
-        :param label:
-        :param value: A string value
-        :param row:
-        :param column:
-        :return:
-        """
-        self._lbl = Label(parent, text=label)
-        self._lbl.grid(row=row, column=column, padx=3, sticky="e")
-        self._var = StringVar()
-        self._var.set(value)
-        self._control = Entry(parent, textvariable=self._var, width=len(value)+1, bd=2)
-        self._control.grid(row=row, column=column+1, padx=3, pady=3, sticky="w")
-
-    def get(self):
-        """
-        Returns the integer value as the string true or false
-        :return:
-        """
-        v = self._var.get()
-        return v
-
-    def focus(self):
-        """
-        Set the focus on this widget. Used for error handling.
-        :return:
-        """
-        self._control.focus()
-
-
-class LabeledIntWidget:
-    """
-    A compound label + numeric entry widget
-    """
-    def __init__(self, parent, label="", value=0, row=0, column=0):
-        """
-        An integer input widget with leading label
-        :param parent:
-        :param label:
-        :param value: An integer value
-        :param row:
-        :param column:
-        :return:
-        """
-        self._lbl = Label(parent, text=label)
-        self._lbl.grid(row=row, column=column, padx=3, sticky="e")
-        self._var = IntVar()
-        self._var.set(int(value))
-        self._control = Entry(parent, textvariable=self._var, width=5, bd=2)
-        self._control.grid(row=row, column=column+1, padx=3, pady=3, sticky="w")
-
-    def get(self):
-        """
-        Returns the integer value as the string true or false
-        :return:
-        """
-        v = self._var.get()
-        try:
-            v = int(v)
-        except ValueError as ex:
-            raise ex
-        return v
-
-    def focus(self):
-        """
-        Set the focus on this widget. Used for error handling.
-        :return:
-        """
-        self._control.focus()
-
-
-class LabeledFloatWidget:
-    """
-    A compound label + numeric entry widget
-    """
-    def __init__(self, parent, label="", value=0.0, row=0, column=0):
-        """
-
-        :param parent:
-        :param label:
-        :param value: A decimal/float value
-        :param row:
-        :param column:
-        :return:
-        """
-        self._lbl = Label(parent, text=label)
-        self._lbl.grid(row=row, column=column, padx=3, sticky="e")
-        self._var = StringVar()
-        self._var.set(str(value))
-        self._control = Entry(parent, textvariable=self._var, width=5, bd=2)
-        self._control.grid(row=row, column=column+1, padx=3, pady=3, sticky="w")
-
-    def get(self):
-        """
-        Returns the integer value as the string true or false
-        :return:
-        """
-        v = self._var.get()
-        try:
-            v = float(v)
-        except ValueError as ex:
-            raise ex
-        return v
-
-    def focus(self):
-        """
-        Set the focus on this widget. Used for error handling.
-        :return:
-        """
-        self._control.focus()
-
-
-class LabeledComboboxWidget:
-    """
-    A compound label + combobox widget
-    """
-    def __init__(self, parent, label="", value="", value_list=[], row=0, column=0, width=6):
-        """
-
-        :param parent:
-        :param label:
-        :param values:
-        :param row:
-        :param column:
-        :return:
-        """
-        self._lbl = Label(parent, text=label)
-        self._lbl.grid(row=row, column=column, padx=3, sticky="e")
-        self._var = StringVar()
-        self._var.set(value)
-        self._control = Combobox(parent, textvariable=self._var, values=value_list, width=width)
-        self._control.grid(row=row, column=column+1, padx=3, pady=3, sticky="w")
-
-    def get(self):
-        """
-        Returns the check value as the string true or false
-        :return:
-        """
-        v = self._var.get()
-        return v
-
-    def focus(self):
-        self._control.focus()
 
 
 class SettingsFrame(Frame):
@@ -244,8 +55,13 @@ class SettingsFrame(Frame):
         self.highlight_color = "#e0e0e0"
 
         # Create window widgets
+        self._mtn_lb_macs = []
         self._mtn_entry_widgets = {}
         self._ste_entry_widgets = {}
+        self._mtn_edit_button = None
+        self._mtn_remove_button = None
+        self._selected_index = -1
+        self._mtn_listbox = None
         self._create_widgets(sw, sh)
 
     def _create_widgets(self, sw, sh):
@@ -258,29 +74,44 @@ class SettingsFrame(Frame):
         # Two frames (lh and rh)
         # - mac to name table
         # - all other settings
-        lh_frame = LabelFrame(self, text="Sensor Names", bd=2)
+        lh_frame = LabelFrame(self, text="Sensor Names", bd=5)
         lh_frame.grid(row=0, column=0, padx=10, pady=5, sticky="n")
 
         rh_frame = Frame(self)
-        rh_frame.grid(row=0, column=1, padx=10, pady=5, sticky="n")
+        rh_frame.grid(row=0, column=1, padx=10, pady=5, ipadx=10, ipady=10, sticky="n")
 
         ste_frame = LabelFrame(rh_frame, text="Settings", bd=2)
         ste_frame.grid(row=0, column=0, padx=10, pady=5, sticky="n")
-        buttons_frame = Frame(rh_frame, bd=2)
-        buttons_frame.grid(row=1, column=0, columnspan=2, sticky="ns")
+
+        # mac-to-name listbox
+        self._mtn_listbox = Listbox(lh_frame, height=20, width=25)
+        self._mtn_listbox.pack(side=LEFT, fill=BOTH, padx=5, pady=2)
+        mtn_scrollbar = Scrollbar(lh_frame, orient=VERTICAL)
+        mtn_scrollbar.pack(side=RIGHT, fill=BOTH)
 
         # mac to name list
-        gr = 0
+        self._mtn_lb_macs = []
         for mac, kvn in self._config[Configuration.CFG_RUUVITAGS].items():
-            lbl = Label(lh_frame, text=f"{mac}")
-            lbl.grid(row=gr, column=0, padx=3, sticky="e")
+            self._mtn_lb_macs.append(mac)
+        self._load_mtn_listbox()
 
-            ent = Entry(lh_frame, width=10, bd=2)
-            ent.insert(0, kvn["name"])
-            ent.grid(row=gr, column=1, padx=3, pady=3)
-            self._mtn_entry_widgets[mac] = ent
+        # Hook up scrollbar and listbox
+        self._mtn_listbox.config(yscrollcommand=mtn_scrollbar.set)
+        mtn_scrollbar.config(command=self._mtn_listbox.yview)
+        # Handle item selected event
+        self._mtn_listbox.bind('<<ListboxSelect>>', self._mtn_selected)
 
-            gr += 1
+        # Create disabled buttons for removing/editingl listbox items
+        # The buttons are enabled wnen a listbox item is selected
+        # TODO Implement remove mtn item
+        mtn_button_frame = Frame(self)
+        self._mtn_edit_button = Button(mtn_button_frame, text="Edit", command=self._edit_mtn_name, state=DISABLED)
+        self._mtn_edit_button.grid(row=0, column=0)
+        self._mtn_remove_button = Button(mtn_button_frame, text="Remove", command=self._remove_mtn_name, state=DISABLED)
+        self._mtn_remove_button.grid(row=0, column=1)
+        mtn_add_button = Button(mtn_button_frame, text="Add", command=self._add_mtn_name)
+        mtn_add_button.grid(row=0, column=2)
+        mtn_button_frame.grid(row=1, column=0)
 
         # Other named settings in a brute force implementation
         # Use test data
@@ -366,11 +197,82 @@ class SettingsFrame(Frame):
         self._ste_entry_widgets["normal_background_color"] = widget
         gr += 1
 
-        # Buttons
+        # Cancel/save buttons
+        buttons_frame = Frame(self)
+        buttons_frame.grid(row=gr, column=0, columnspan=2, sticky="ns")
         cancel_button = Button(buttons_frame, text="Cancel", command=self.destroy)
         cancel_button.pack(side="left")
-        save_button = Button(buttons_frame, text="Save", command=self._save_config)
+        save_button = Button(buttons_frame, text="Save All Settings", command=self._save_config)
         save_button.pack(side="right")
+
+    def _edit_mtn_name(self):
+        """
+        Edit the currently selected mac-to-name listbox entry. Depends on being
+        called only after an item is selected.
+        :return:
+        """
+        mac = self._mtn_lb_macs[self._selected_index]
+        name = self._config[Configuration.CFG_RUUVITAGS][mac]["name"]
+        name = askstring("Edit name of sensor", mac, initialvalue=name, parent=self)
+
+        # If the dialog was canceled, the name is None
+        if name is None:
+            return
+
+        # Update the config
+        self._config[Configuration.CFG_RUUVITAGS][mac]["name"] = name
+
+        # Update the mtn listbox
+        # Clear the listbox and reload
+        self._load_mtn_listbox()
+
+    def _remove_mtn_name(self):
+        """
+        Remove the currently selected mac-to-name entry
+        :return:
+        """
+        pass
+
+    def _add_mtn_name(self):
+        """
+        Add a new mac-to-name entry
+        :return:
+        """
+        pass
+
+    def _load_mtn_listbox(self):
+        """
+        Load/reload the mac-to-name listbox
+        :return:
+        """
+        self._mtn_listbox.delete(0, len(self._mtn_lb_macs))
+        for mac, kvn in self._config[Configuration.CFG_RUUVITAGS].items():
+            item = f"{mac}:\t{kvn['name']}"
+            self._mtn_listbox.insert(END, item)
+
+    def _mtn_selected(self, event):
+        """
+        A mac-to-name listbox entry has been selected
+        :param event: object defining event. event.widget is the listbox object.
+        :return:
+        """
+        # Note here that Tkinter passes an event object to onselect()
+        w = event.widget
+        selected_index = w.curselection()
+
+        # Nothing selected
+        if len(selected_index) == 0:
+            self._mtn_edit_button.config(state=DISABLED)
+            self._mtn_remove_button.config(state=DISABLED)
+            return
+
+        self._selected_index = selected_index[0]
+        mac = self._mtn_lb_macs[self._selected_index]
+        name = self._config[Configuration.CFG_RUUVITAGS][mac]["name"]
+        # print('You selected item %d: "%s"' % (index, mac))
+        print(f"You selected item: {self._selected_index} mac: {mac} name: {name}")
+        self._mtn_edit_button.config(state=NORMAL)
+        self._mtn_remove_button.config(state=NORMAL)
 
     def _save_config(self):
         """
