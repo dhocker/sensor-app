@@ -1,3 +1,4 @@
 Pillow
 ruuvitag_sensor
 # rpi_backlight
+# pyobjc
