@@ -1,4 +1,4 @@
 Pillow
 ruuvitag_sensor
-# rpi_backlight
-# pyobjc
+rpi_backlight; platform_machine == 'armv6l' or platform_machine == 'armv7l' or platform_machine == 'armv8l'
+pyobjc; platform_system == 'Darwin'
