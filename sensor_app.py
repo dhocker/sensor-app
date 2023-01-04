@@ -29,6 +29,7 @@ import logging
 import app_logger
 from sensor_overview_frame import SensorOverviewFrame
 from settings_frame import SettingsFrame
+from tkmacos_utils import set_menubar_app_name
 
 
 class SensorApp(Tk):
@@ -191,17 +192,7 @@ if __name__ == '__main__':
     logger.info("sensor_app starting...")
 
     # Fix macos menu bar
-    # Check if we're on OS X, first.
-    from sys import platform
-    if platform == 'darwin':
-        # This has to be done BEFORE firing up tkinter
-        from Foundation import NSBundle
-        bundle = NSBundle.mainBundle()
-        if bundle:
-            info = bundle.infoDictionary()
-            if info and info['CFBundleName'] == 'Python':
-                info['CFBundleName'] = "Sensor App"
-                info["CFBundleExecutable"] = "Sensor App"
+    set_menubar_app_name("Sensor App")
 
     main_frame = SensorApp()
     main_frame.mainloop()
