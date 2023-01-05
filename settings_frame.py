@@ -84,7 +84,7 @@ class SettingsFrame(Frame):
         ste_frame.grid(row=0, column=0, padx=10, pady=5, sticky="n")
 
         # mac-to-name listbox
-        self._mtn_listbox = Listbox(lh_frame, height=20, width=25)
+        self._mtn_listbox = Listbox(lh_frame, height=10, width=25)
         self._mtn_listbox.pack(side=LEFT, fill=BOTH, padx=5, pady=2)
         mtn_scrollbar = Scrollbar(lh_frame, orient=VERTICAL)
         mtn_scrollbar.pack(side=RIGHT, fill=BOTH)
@@ -199,7 +199,7 @@ class SettingsFrame(Frame):
 
         # Cancel/save buttons
         buttons_frame = Frame(self)
-        buttons_frame.grid(row=gr, column=0, columnspan=2, sticky="ns")
+        buttons_frame.grid(row=1, column=1, columnspan=2, sticky="ns")
         cancel_button = Button(buttons_frame, text="Cancel", command=self.destroy)
         cancel_button.pack(side="left")
         save_button = Button(buttons_frame, text="Save All Settings", command=self._save_config)
