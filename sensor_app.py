@@ -106,6 +106,9 @@ class SensorApp(Tk):
             self.createcommand('tk::mac::ShowPreferences', self._show_settings)
 
         # All OSes
+        filemenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
+        self._menu_bar.add_cascade(label="File", menu=filemenu)
+        filemenu.add_command(label="Quit", command=self.destroy)
         editmenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
         self._menu_bar.add_cascade(label="Edit", menu=editmenu)
 
