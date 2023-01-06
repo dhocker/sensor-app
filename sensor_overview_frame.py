@@ -96,9 +96,22 @@ class SensorOverviewFrame(Frame):
         # Create an ordered list of sensor macs so we can display them alphabetically by name
         sorted_mac_list = self._create_sorted_mac_list(self._sensor_data_source.sensor_list)
 
-        # Order frames by name, reposition all frames
         self._gr = 0
         self._gc = 0
+
+        # Show current time at the top right
+        if self._current_time_label is None:
+            dt_font = font.Font(family="Arial", size=18)
+            self._current_time_label = Label(self, text=SensorOverviewFrame._now_str(), font=dt_font)
+        else:
+            self._current_time_label.config(text=SensorOverviewFrame._now_str())
+        self._current_time_label.grid(row=self._gr,
+                                      column=self._gc, columnspan=self._available_width,
+                                      sticky="e",
+                                      padx=10, pady=10)
+        self._gr += 1
+
+        # Order frames by name, reposition all frames
         self._available_width = self._config[Configuration.CFG_SENSORS_PER_ROW]
         for mac in sorted_mac_list:
             self._sensor_frames[mac].grid(row=self._gr, column=self._gc, padx=5, pady=5)
@@ -114,33 +127,6 @@ class SensorOverviewFrame(Frame):
         # Update sensor data in each frame
         for mac, sensor_data in self._sensor_data_source.sensor_list.items():
             self._sensor_frames[mac].update(sensor_data)
-
-        # Move quit button to bottom of sensor frames
-        if self._available_width < 3:
-            self._gr += 1
-
-        # Define Quit button which will quit the app
-        if self._quit_button is None:
-            btn_font = font.Font(family="Arial", size=18)
-            self._quit_button = Button(self,
-                                       text="Quit",
-                                       command=self._parent.destroy,
-                                       width=4, height=1,
-                                       font=btn_font)
-        self._quit_button.grid(row=self._gr, column=self._gc, sticky="W", padx=15, pady=5)
-        self._gc += 1
-        self._available_width -= 1
-
-        # Show current time
-        if self._current_time_label is None:
-            dt_font = font.Font(family="Arial", size=18)
-            self._current_time_label = Label(self, text=SensorOverviewFrame._now_str(), font=dt_font)
-        else:
-            self._current_time_label.config(text=SensorOverviewFrame._now_str())
-        self._current_time_label.grid(row=self._gr,
-                                      column=self._gc, columnspan=self._available_width,
-                                      sticky="e",
-                                      padx=10, pady=10)
         self._gr += 1
 
         # configuration setting
