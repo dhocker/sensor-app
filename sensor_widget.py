@@ -34,7 +34,7 @@ class SensorWidget(LabelFrame):
     }
 
     def __init__(self, parent, id, name, sensor_data):
-        self._lbl_font = font.Font(family="Arial", size=18)
+        self._lbl_font = font.Font(family="Arial", size=16)
         self._bd = 6
         self._config = Configuration.get_configuration()
         self._bg = self._determine_background_color(sensor_data)
