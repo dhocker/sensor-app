@@ -101,7 +101,7 @@ class SensorOverviewFrame(Frame):
 
         # Show current time at the top right
         if self._current_time_label is None:
-            dt_font = font.Font(family="Arial", size=16)
+            dt_font = font.Font(family="Arial", size=self._config[Configuration.CFG_OVERVIEW_FONT_SIZE])
             self._current_time_label = Label(self, text=SensorOverviewFrame._now_str(), font=dt_font)
         else:
             self._current_time_label.config(text=SensorOverviewFrame._now_str())

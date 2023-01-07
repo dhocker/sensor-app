@@ -48,6 +48,7 @@ class Configuration():
     CFG_LOW_BATTERY_THRESHOLD = "low_battery_threshold"  # in mv, recommended 1800
     CFG_LOW_BATTERY_COLOR = "low_battery_color"
     CFG_NORMAL_BACKGROUND_COLOR = "normal_background_color"
+    CFG_OVERVIEW_FONT_SIZE = "overview_font_size"
 
     def __init__(self):
         Configuration.load_configuration()
