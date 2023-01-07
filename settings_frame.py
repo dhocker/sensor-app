@@ -197,6 +197,13 @@ class SettingsFrame(Frame):
         self._ste_entry_widgets["normal_background_color"] = widget
         gr += 1
 
+        value = self._config[Configuration.CFG_OVERVIEW_FONT_SIZE]
+        widget = LabeledIntWidget(ste_frame, label=Configuration.CFG_OVERVIEW_FONT_SIZE,
+                                     value=value,
+                                     row=gr, column=2)
+        self._ste_entry_widgets[Configuration.CFG_OVERVIEW_FONT_SIZE] = widget
+        gr += 1
+
         # Cancel/save buttons
         buttons_frame = Frame(self)
         buttons_frame.grid(row=1, column=1, columnspan=2, sticky="ns")
@@ -345,6 +352,13 @@ class SettingsFrame(Frame):
             self._config["normal_background_color"] = normal_background_color
         except:
             self._ste_entry_widgets["normal_background_color"].focus()
+            return
+
+        try:
+            overview_font_size = self._ste_entry_widgets[Configuration.CFG_OVERVIEW_FONT_SIZE].get()
+            self._config[Configuration.CFG_OVERVIEW_FONT_SIZE] = overview_font_size
+        except:
+            self._ste_entry_widgets[Configuration.CFG_OVERVIEW_FONT_SIZE].focus()
             return
 
         Configuration.save_configuration()
