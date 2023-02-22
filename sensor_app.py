@@ -1,6 +1,6 @@
 # coding: utf-8
 #
-# Copyright © 2022 Dave Hocker (email: AtHomeX10@gmail.com)
+# Copyright © 2022, 2023 Dave Hocker (email: AtHomeX10@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import app_logger
 from sensor_overview_frame import SensorOverviewFrame
 from settings_frame import SettingsFrame
 from tkmacos_utils import set_menubar_app_name
+from display_controller import DisplayController
 
 
 class SensorApp(Tk):
@@ -91,6 +92,19 @@ class SensorApp(Tk):
         # Handle app exit (when the closer X is clicked)
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
+        # Display/backlight controller
+        self._display_controller = DisplayController(count_down_time=self._config[Configuration.CFG_DISPLAY_TIMEOUT],
+                                                     brightness=self._config[Configuration.CFG_DISPLAY_BRIGHTNESS])
+        self._display_controller.reset_count_down()
+        self._count_down_time = 10
+        self.after(self._count_down_time * 1000, self._update_backlight_controller)
+
+        # Capture events that reset the backlight timer
+        # Only motion in the overview frame
+        self._overview_frame.bind("<Motion>", self._reset_backlight_controller)
+        # Any key like ctrl or alt
+        self.bind("<Key>", self._reset_backlight_controller)
+
     def _create_menu(self):
         # App menu bar
         menu_font = font.Font(family="Arial", size=14)
@@ -121,6 +135,14 @@ class SensorApp(Tk):
             self._menu_bar.add_cascade(label="Help", menu=helpmenu)
 
         self.config(menu=self._menu_bar)
+
+    def _update_backlight_controller(self):
+        # Backlight time out interval is 10 seconds
+        self._display_controller.count_down(self._count_down_time)
+        self.after(10000, self._update_backlight_controller)
+
+    def _reset_backlight_controller(self, event):
+        self._display_controller.reset_count_down()
 
     def _show_settings(self):
         """

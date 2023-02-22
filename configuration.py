@@ -1,6 +1,6 @@
 #
 # configuraton.py - sensor monitor configuration
-# © 2022 by Dave Hocker
+# © 2022, 2023 by Dave Hocker
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ class Configuration():
     CFG_LOW_BATTERY_COLOR = "low_battery_color"
     CFG_NORMAL_BACKGROUND_COLOR = "normal_background_color"
     CFG_OVERVIEW_FONT_SIZE = "overview_font_size"
+    CFG_DISPLAY_TIMEOUT = "display_timeout"
+    CFG_DISPLAY_BRIGHTNESS = "display_brightness"
 
     def __init__(self):
         Configuration.load_configuration()
