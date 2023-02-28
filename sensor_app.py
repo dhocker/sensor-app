@@ -37,9 +37,6 @@ class SensorApp(Tk):
     def __init__(self):
         super(SensorApp, self).__init__()
 
-        # Maximize the window/frame
-        self.state('zoomed')
-
         # Create a logger
         self._logger = logging.getLogger("sensor_app")
 
@@ -58,9 +55,9 @@ class SensorApp(Tk):
         if sw > 800:
             fw = 800
             fh = 480
-        # geo = "{0}x{1}+{2}+{3}".format(int(fw), int(fh), int(0), int(0))
-        # self.geometry(geo)
-        # self.resizable(width=False, height=False)
+        geo = "{0}x{1}+{2}+{3}".format(int(fw), int(fh), int(0), int(0))
+        self.geometry(geo)
+        self.resizable(width=False, height=False)
         self._sw = fw
         self._sh = fh
 
