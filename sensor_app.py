@@ -36,6 +36,7 @@ from display_controller import DisplayController
 class SensorApp(Tk):
     def __init__(self):
         super(SensorApp, self).__init__()
+        self.title("Ruuvi Tag Sensor App")
 
         # Create a logger
         self._logger = logging.getLogger("sensor_app")
@@ -49,15 +50,11 @@ class SensorApp(Tk):
         self._logger.info(f"Full screen resolution: {sw}x{sh}")
 
         # Position and size main window
-        self.title("Ruuvi Tag Sensor App")
         fw = sw
         fh = sh
         if sw > 800:
             fw = 800
             fh = 480
-        geo = "{0}x{1}+{2}+{3}".format(int(fw), int(fh), int(0), int(0))
-        self.geometry(geo)
-        self.resizable(width=False, height=False)
         self._sw = fw
         self._sh = fh
 
@@ -69,6 +66,16 @@ class SensorApp(Tk):
 
         # will return x11 (Linux), win32 or aqua (macOS)
         self._gfx_platform = self.tk.call('tk', 'windowingsystem').lower()
+
+        # Maximize the window
+        if self._gfx_platform in ["win32", "aqua"]:
+            self.state("zoomed")
+        elif self._gfx_platform == "x11":
+            self.attributes("-zoomed", True)
+        else:
+            geo = "{0}x{1}+{2}+{3}".format(int(fw), int(fh), int(0), int(0))
+            self.geometry(geo)
+            self.resizable(width=False, height=False)
 
         # Start sensor data source
         if self._config[Configuration.CFG_USE_TEST_DATA].lower() == "true":
