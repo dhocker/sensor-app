@@ -61,7 +61,7 @@ class SensorWidget(LabelFrame):
 
             label = Label(self, text=f"{sensor_data[data_value_key]:5.1f}", font=self._lbl_font, bg=self._bg)
             label.bind("<Button-1>", self._show_details)
-            label.grid(row=gr, column=1, sticky="W", padx=1, pady=1)
+            label.grid(row=gr, column=1, sticky="E", padx=1, pady=1)
             self._sensor_value_labels[data_value_key] = label
 
             gr += 1
@@ -74,10 +74,12 @@ class SensorWidget(LabelFrame):
         label = Label(self, text=f"last", font=self._lbl_font, bg=self._bg)
         label.bind("<Button-1>", self._show_details)
         label.grid(row=gr, column=0, sticky="W", padx=1, pady=1)
+        self._sensor_labels["last"] = label
 
-        label = Label(self, text=f"{sec}", font=self._lbl_font, bg=self._bg)
+        label = Label(self, text=f"{sec:d}", font=self._lbl_font, bg=self._bg)
         label.bind("<Button-1>", self._show_details)
-        label.grid(row=gr, column=1, sticky="W", padx=1, pady=1)
+        label.grid(row=gr, column=1, sticky="E", padx=1, pady=1)
+        self._sensor_value_labels["last"] = label
 
         self._id = id
         self._name = name
@@ -123,8 +125,16 @@ class SensorWidget(LabelFrame):
         self.config(bg=self._determine_background_color(sensor_data))
 
         # Update sensor values
+        bg = self._determine_background_color(sensor_data)
         for data_key, data_name in SensorWidget._SENSOR_VALUE_KEYS.items():
-            bg = self._determine_background_color(sensor_data)
             self._sensor_labels[data_key].config(bg=bg)
             self._sensor_value_labels[data_key].config(bg=bg)
             self._sensor_value_labels[data_key].config(text=f"{sensor_data[data_key]:5.1f}")
+
+        # Elapsed time since last data
+        last = sensor_data["timestamp"]
+        delta = datetime.now() - last
+        sec = delta.seconds
+
+        self._sensor_labels["last"].config(bg=bg)
+        self._sensor_value_labels["last"].config(text=f"{sec:d}")
