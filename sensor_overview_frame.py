@@ -100,6 +100,7 @@ class SensorOverviewFrame(Frame):
         self._gc = 0
 
         # Show current time at the top right
+        self._available_width = self._config[Configuration.CFG_SENSORS_PER_ROW]
         if self._current_time_label is None:
             dt_font = font.Font(family="Arial", size=self._config[Configuration.CFG_OVERVIEW_FONT_SIZE])
             self._current_time_label = Label(self, text=SensorOverviewFrame._now_str(), font=dt_font)
@@ -112,7 +113,6 @@ class SensorOverviewFrame(Frame):
         self._gr += 1
 
         # Order frames by name, reposition all frames
-        self._available_width = self._config[Configuration.CFG_SENSORS_PER_ROW]
         for mac in sorted_mac_list:
             self._sensor_frames[mac].grid(row=self._gr, column=self._gc, padx=5, pady=5)
             self._available_width -= 1
