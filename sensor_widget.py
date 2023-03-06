@@ -66,9 +66,18 @@ class SensorWidget(LabelFrame):
 
             gr += 1
 
-        # A button for displaying all the details of a sensor's data
-        # self._show_details_button = Button(self, text="Show Details", height=1, command=self._show_details)
-        # self._show_details_button.grid(row=gr, column=0, columnspan=2, padx=5, pady=5)
+        # Elapsed time since last data
+        last = sensor_data["timestamp"]
+        delta = datetime.now() - last
+        sec = delta.seconds
+
+        label = Label(self, text=f"last", font=self._lbl_font, bg=self._bg)
+        label.bind("<Button-1>", self._show_details)
+        label.grid(row=gr, column=0, sticky="W", padx=1, pady=1)
+
+        label = Label(self, text=f"{sec}", font=self._lbl_font, bg=self._bg)
+        label.bind("<Button-1>", self._show_details)
+        label.grid(row=gr, column=1, sticky="W", padx=1, pady=1)
 
         self._id = id
         self._name = name
