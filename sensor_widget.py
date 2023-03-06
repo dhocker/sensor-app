@@ -29,8 +29,8 @@ class SensorWidget(LabelFrame):
     """
     # The values that will be displayed. The key and its label.
     _SENSOR_VALUE_KEYS = {
-        "temperature": "temp",
-        "humidity": "humid"
+        "temperature": {"label": "temp", "suffix": "F"},
+        "humidity": {"label": "humid", "suffix": "%"}
     }
 
     def __init__(self, parent, id, name, sensor_data):
@@ -52,14 +52,16 @@ class SensorWidget(LabelFrame):
         gr = 0
         self._sensor_labels = {}
         self._sensor_value_labels = {}
-        for data_value_key, data_value_name in SensorWidget._SENSOR_VALUE_KEYS.items():
+        for data_value_key, data_value_props in SensorWidget._SENSOR_VALUE_KEYS.items():
             # Sensor value name and its value. Take a click on either label.
-            label = Label(self, text=f"{data_value_name}", font=self._lbl_font, bg=self._bg)
+            label = Label(self, text=f"{data_value_props['label']}", font=self._lbl_font, bg=self._bg)
             label.bind("<Button-1>", self._show_details)
             label.grid(row=gr, column=0, sticky="W", padx=1, pady=1)
             self._sensor_labels[data_value_key] = label
 
-            label = Label(self, text=f"{sensor_data[data_value_key]:5.1f}", font=self._lbl_font, bg=self._bg)
+            label = Label(self,
+                          text=f"{sensor_data[data_value_key]:5.1f}{data_value_props['suffix']}",
+                          font=self._lbl_font, bg=self._bg)
             label.bind("<Button-1>", self._show_details)
             label.grid(row=gr, column=1, sticky="E", padx=1, pady=1)
             self._sensor_value_labels[data_value_key] = label
@@ -76,7 +78,7 @@ class SensorWidget(LabelFrame):
         label.grid(row=gr, column=0, sticky="W", padx=1, pady=1)
         self._sensor_labels["last"] = label
 
-        label = Label(self, text=f"{sec:d}", font=self._lbl_font, bg=self._bg)
+        label = Label(self, text=f"{sec:d}s", font=self._lbl_font, bg=self._bg)
         label.bind("<Button-1>", self._show_details)
         label.grid(row=gr, column=1, sticky="E", padx=1, pady=1)
         self._sensor_value_labels["last"] = label
@@ -126,10 +128,10 @@ class SensorWidget(LabelFrame):
 
         # Update sensor values
         bg = self._determine_background_color(sensor_data)
-        for data_key, data_name in SensorWidget._SENSOR_VALUE_KEYS.items():
+        for data_key, data_props in SensorWidget._SENSOR_VALUE_KEYS.items():
             self._sensor_labels[data_key].config(bg=bg)
             self._sensor_value_labels[data_key].config(bg=bg)
-            self._sensor_value_labels[data_key].config(text=f"{sensor_data[data_key]:5.1f}")
+            self._sensor_value_labels[data_key].config(text=f"{sensor_data[data_key]:5.1f}{data_props['suffix']}")
 
         # Elapsed time since last data
         last = sensor_data["timestamp"]
@@ -137,4 +139,4 @@ class SensorWidget(LabelFrame):
         sec = delta.seconds
 
         self._sensor_labels["last"].config(bg=bg)
-        self._sensor_value_labels["last"].config(text=f"{sec:d}")
+        self._sensor_value_labels["last"].config(text=f"{sec:d}s")
