@@ -146,13 +146,28 @@ class SensorThread(Thread):
     @property
     def sensor_list(self):
         """
-        Return the sensor list. Note that this is read-only data.
-        Hence, there is no locking.
+        Return the sensor list. Note that this should be treated as read-only data.
+        The list should be locked before accessing the data.
         Returns: The current sensor list. The sensor list is a dict whose
         key is the RuuviTag mac and the data is what the RuuviTagSensor module returned.
         The data is also a dict containing all the sensors properties.
         """
-        return copy.copy(self._sensor_list)
+        return self._sensor_list
+
+    def lock_sensor_list(self):
+        """
+        Acquire the list lock
+        :return: Locked sensor list
+        """
+        self._list_lock.acquire()
+        return self._sensor_list
+
+    def unlock_sensor_list(self):
+        """
+        Release the list lock
+        :return:
+        """
+        self._list_lock.release()
 
     def terminate(self):
         """

@@ -21,6 +21,7 @@ from datetime import datetime
 import random
 import logging
 import copy
+from threading import Lock
 from sensor_utils import to_fahrenheit
 from configuration import Configuration
 
@@ -32,6 +33,7 @@ class DummySensorAdapter:
     def __init__(self):
         self._terminate = False
         self._logger = logging.getLogger("sensor_monitor")
+        self._list_lock = Lock()
         self._config = Configuration.get_configuration()
         self._dummy_ruuvi_data = {}
 
@@ -85,15 +87,31 @@ class DummySensorAdapter:
     @property
     def sensor_list(self):
         """
-        Return the sensor list. Note that this is read-only data.
-        Hence, there is no locking.
+        Return the sensor list. Note that this should be treated as read-only data.
         Returns: The current sensor list. The sensor list is a dict whose
         key is the RuuviTag mac and the data is what the RuuviTagSensor module returned.
         The data is also a dict containing all the sensors properties.
         """
         # Update data. Pick up any settings changes.
         self._generate_ruuvi_data()
-        return copy.copy(self._dummy_ruuvi_data)
+        return self._dummy_ruuvi_data
+
+    def lock_sensor_list(self):
+        """
+        Acquire the list lock
+        :return: Locked sensor list
+        """
+        # There is no lock for the dummy data
+        self._list_lock.acquire()
+        return self.sensor_list
+
+    def unlock_sensor_list(self):
+        """
+        Release the list lock
+        :return:
+        """
+        # There is no lock for the dummy data
+        self._list_lock.release()
 
     def terminate(self):
         """

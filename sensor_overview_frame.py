@@ -69,10 +69,14 @@ class SensorOverviewFrame(Frame):
         sensor_frame = SensorWidget(self, mac, sensor_data["name"], sensor_data)
         self._sensor_frames[mac] = sensor_frame
 
-    def _create_sorted_mac_list(self, sensor_data):
-        # Make a dict of just the mac and sensor name
+    def _create_sorted_mac_list(self, sensor_list):
+        """
+        Make a dict of just the mac and sensor name
+        :param sensor_list: dict of sensor macs and associated sensor data
+        :return: dict of sensor macs and their names
+        """
         unsorted_mac_list = {}
-        for mac, sensor_data in self._sensor_data_source.sensor_list.items():
+        for mac, sensor_data in sensor_list.items():
             unsorted_mac_list[mac] = sensor_data["name"]
 
         # Sort the unsorted dict to a bunch of tuples
@@ -88,13 +92,16 @@ class SensorOverviewFrame(Frame):
         """
         self._logger.debug("Updating sensor frames")
 
+        # Safely access the current sensor list
+        sensor_list = self._sensor_data_source.lock_sensor_list()
+
         # Create newly discovered sensors
-        for mac, sensor_data in self._sensor_data_source.sensor_list.items():
+        for mac, sensor_data in sensor_list.items():
             if mac not in self._sensor_frames.keys():
                 self._create_sensor_frame(mac, sensor_data)
 
         # Create an ordered list of sensor macs so we can display them alphabetically by name
-        sorted_mac_list = self._create_sorted_mac_list(self._sensor_data_source.sensor_list)
+        sorted_mac_list = self._create_sorted_mac_list(sensor_list)
 
         self._gr = 0
         self._gc = 0
@@ -125,9 +132,12 @@ class SensorOverviewFrame(Frame):
                 self._gc += 1
 
         # Update sensor data in each frame
-        for mac, sensor_data in self._sensor_data_source.sensor_list.items():
+        for mac, sensor_data in sensor_list.items():
             self._sensor_frames[mac].update(sensor_data)
         self._gr += 1
+
+        # Release the sensor list lock
+        self._sensor_data_source.unlock_sensor_list()
 
         # configuration setting
         self.after(self._update_interval, self.update_sensors)
