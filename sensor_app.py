@@ -138,7 +138,7 @@ class SensorApp(Tk):
         self._time_of_day = Menu(self._menu_bar, tearoff=0, font=menu_font)
         # This formats the menu bar item so it is right adjusted. The
         # width was determined empirically and is not likely to work in all cases.
-        self._tod_label_width = 200
+        self._tod_label_width = 100
         self._time_of_day_label = now_str().ljust(self._tod_label_width)
         self._menu_bar.add_cascade(label=f"{self._time_of_day_label}", menu=self._time_of_day)
         self._update_tod_interval = 10 * 1000  # every 10 seconds
