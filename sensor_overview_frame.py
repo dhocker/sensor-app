@@ -16,7 +16,6 @@
 #
 
 
-import datetime
 from tkinter import Tk, Button, Label, Menu, Frame
 from tkinter import font
 from configuration import Configuration
@@ -106,18 +105,8 @@ class SensorOverviewFrame(Frame):
         self._gr = 0
         self._gc = 0
 
-        # Show current time at the top right
+        # How many sensors per row?
         self._available_width = self._config[Configuration.CFG_SENSORS_PER_ROW]
-        if self._current_time_label is None:
-            dt_font = font.Font(family="Arial", size=self._config[Configuration.CFG_OVERVIEW_FONT_SIZE])
-            self._current_time_label = Label(self, text=SensorOverviewFrame._now_str(), font=dt_font)
-        else:
-            self._current_time_label.config(text=SensorOverviewFrame._now_str())
-        self._current_time_label.grid(row=self._gr,
-                                      column=self._gc, columnspan=self._available_width,
-                                      sticky="e",
-                                      padx=10, pady=10)
-        self._gr += 1
 
         # Order frames by name, reposition all frames
         for mac in sorted_mac_list:
@@ -141,19 +130,3 @@ class SensorOverviewFrame(Frame):
 
         # configuration setting
         self.after(self._update_interval, self.update_sensors)
-
-    @staticmethod
-    def _now_str():
-        """
-        Return a formatted string containing the current date and time
-        :return:
-        """
-        now_dt = datetime.datetime.now()
-        # custom format to remove unwanted leading zeros
-        ampm = "am"
-        if now_dt.hour >= 12:
-            ampm = "pm"
-        hour = now_dt.hour
-        if hour > 12:
-            hour -= 12
-        return f"{now_dt.year:4d}-{now_dt.month:02d}-{now_dt.day:02d}  {hour:2d}:{now_dt.minute:02d} {ampm}"

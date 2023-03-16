@@ -31,6 +31,7 @@ from sensor_overview_frame import SensorOverviewFrame
 from settings_frame import SettingsFrame
 from tkmacos_utils import set_menubar_app_name
 from display_controller import DisplayController
+from sensor_utils import now_str
 
 
 class SensorApp(Tk):
@@ -133,6 +134,16 @@ class SensorApp(Tk):
         editmenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
         self._menu_bar.add_cascade(label="Edit", menu=editmenu)
 
+        # Time of day
+        self._time_of_day = Menu(self._menu_bar, tearoff=0, font=menu_font)
+        # This formats the menu bar item so it is right adjusted. The
+        # width was determined empirically and is not likely to work in all cases.
+        self._tod_label_width = 200
+        self._time_of_day_label = now_str().ljust(self._tod_label_width)
+        self._menu_bar.add_cascade(label=f"{self._time_of_day_label}", menu=self._time_of_day)
+        self._update_tod_interval = 10 * 1000  # every 10 seconds
+        self.after(self._update_tod_interval, self._update_tod)
+
         # Non-macOS
         if self._gfx_platform in ["x11", "linux"]:
             # On macOS settings on the app menu. On all others, its on the edit menu
@@ -167,6 +178,17 @@ class SensorApp(Tk):
         """
         self._overview_frame.update_sensors()
         self._logger.debug("Sensor overview frame refreshed")
+
+    def _update_tod(self):
+        """
+        Update the TOD menu item
+        :return: None
+        """
+        # self._logger.debug("Updating TOD")
+        new_tod_label = now_str().ljust(self._tod_label_width)
+        self._menu_bar.entryconfig(self._time_of_day_label, label=f"{new_tod_label}")
+        self._time_of_day_label = new_tod_label
+        self.after(self._update_tod_interval, self._update_tod)
 
     def _show_about(self):
         # about_text = \
