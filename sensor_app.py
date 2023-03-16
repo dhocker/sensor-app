@@ -147,7 +147,7 @@ class SensorApp(Tk):
         # This formats the menu bar item so it is right adjusted. The
         # width was determined empirically and is not likely to work in all cases.
         self._tod_label_width = 100
-        self._time_of_day_label = now_str().ljust(self._tod_label_width)
+        self._time_of_day_label = now_str().rjust(self._tod_label_width)
         self._menu_bar.add_cascade(label=f"{self._time_of_day_label}", menu=self._time_of_day)
         self._update_tod_interval = 10 * 1000  # every 10 seconds
         self.after(self._update_tod_interval, self._update_tod)
@@ -185,7 +185,7 @@ class SensorApp(Tk):
         :return: None
         """
         # self._logger.debug("Updating TOD")
-        new_tod_label = now_str().ljust(self._tod_label_width)
+        new_tod_label = now_str().rjust(self._tod_label_width)
         self._menu_bar.entryconfig(self._time_of_day_label, label=f"{new_tod_label}")
         self._time_of_day_label = new_tod_label
         self.after(self._update_tod_interval, self._update_tod)
