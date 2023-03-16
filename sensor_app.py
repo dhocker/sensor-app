@@ -134,7 +134,15 @@ class SensorApp(Tk):
         editmenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
         self._menu_bar.add_cascade(label="Edit", menu=editmenu)
 
-        # Time of day
+        # Non-macOS
+        if self._gfx_platform in ["x11", "linux"]:
+            # On macOS settings on the app menu. On all others, its on the edit menu
+            editmenu.add_command(label="Settings", command=self._show_settings)
+            helpmenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
+            helpmenu.add_command(label="About...", command=self._show_about)
+            self._menu_bar.add_cascade(label="Help", menu=helpmenu)
+
+        # Time of day, the last menu item
         self._time_of_day = Menu(self._menu_bar, tearoff=0, font=menu_font)
         # This formats the menu bar item so it is right adjusted. The
         # width was determined empirically and is not likely to work in all cases.
@@ -143,14 +151,6 @@ class SensorApp(Tk):
         self._menu_bar.add_cascade(label=f"{self._time_of_day_label}", menu=self._time_of_day)
         self._update_tod_interval = 10 * 1000  # every 10 seconds
         self.after(self._update_tod_interval, self._update_tod)
-
-        # Non-macOS
-        if self._gfx_platform in ["x11", "linux"]:
-            # On macOS settings on the app menu. On all others, its on the edit menu
-            editmenu.add_command(label="Settings", command=self._show_settings)
-            helpmenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
-            helpmenu.add_command(label="About...", command=self._show_about)
-            self._menu_bar.add_cascade(label="Help", menu=helpmenu)
 
         self.config(menu=self._menu_bar)
 
