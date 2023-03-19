@@ -19,8 +19,7 @@
 #
 
 
-import datetime
-from tkinter import messagebox
+from tkinter import VERTICAL
 from tkinter import Tk, Button, Label, Menu
 from tkinter import font
 # from tkinter import ttk
@@ -32,6 +31,8 @@ from settings_frame import SettingsFrame
 from tkmacos_utils import set_menubar_app_name
 from display_controller import DisplayController
 from sensor_utils import now_str
+from modal_dialog import ModalDialog
+import version
 
 
 class SensorApp(Tk):
@@ -191,31 +192,22 @@ class SensorApp(Tk):
         self.after(self._update_tod_interval, self._update_tod)
 
     def _show_about(self):
-        # about_text = \
-        #     "Copyright © 2022 by Dave Hocker\n" + \
-        #     "\n" + \
-        #     "Source: https://github.com/dhocker/pyid3tag\n" + \
-        #     "License: GNU General Public License v3\n" + \
-        #     "as published by the Free Software Foundation, Inc."
-        #
-        # # Locate logo image file
-        # cwd = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0]))
-        # if os.path.exists(cwd + "/id3tag.gif"):
-        #     image_path = cwd + "/id3tag.gif"
-        # elif os.path.exists(cwd + "/resources/id3tag.gif"):
-        #     image_path = cwd + "/resources/id3tag.gif"
-        # else:
-        #     image_path = "id3tag.gif"
-        #
-        # # This is a modal message box
-        # mb = TextMessageBox(self, title="About pyid3tag", text=about_text,
-        #                     heading="ID3 Tag Editor",
-        #                     image=image_path, orient=tkinter.HORIZONTAL)
-        # mb.show()
-        # self.wait_window(window=mb)
-        messagebox.showinfo(title="About Sensor-App",
-                            message="About for Sensor-App is not implemented",
-                            parent=self)
+        """
+        Show the about dialog box
+        :return:
+        """
+        about_text = \
+            "© 2023 by Dave Hocker\n" \
+            f"Version {version.version}\n" \
+            "\n" \
+            "Source: https://github.com/dhocker/sensor-app\n" \
+            "License: GNU General Public License v3\n" \
+            "as published by the Free Software Foundation, Inc.\n"
+
+        mb = ModalDialog(self,
+                         title="About Sensor-App",
+                         heading="Sensor-App",
+                         text=about_text)
 
     def _show_app_help(self):
         pass
