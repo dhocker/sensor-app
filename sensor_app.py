@@ -111,6 +111,9 @@ class SensorApp(Tk):
         # Capture events that reset the backlight timer
         # Only motion in the overview frame
         self._overview_frame.bind("<Motion>", self._reset_backlight_controller)
+        self._overview_frame.bind("<B1-Motion>", self._reset_backlight_controller)
+        self._overview_frame.bind("<B2-Motion>", self._reset_backlight_controller)
+        self._overview_frame.bind("<B3-Motion>", self._reset_backlight_controller)
         # Any key like ctrl or alt
         self.bind("<Key>", self._reset_backlight_controller)
 
