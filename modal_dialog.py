@@ -42,6 +42,9 @@ class ModalDialog(Dialog):
         :param master: Parent window
         :return: None
         """
+        master.config(bd=2)
+        master.config(relief=tkinter.RIDGE)
+
         self._create_message_text(self._heading, self._text)
 
     def _create_message_text(self, heading, text, font="TkDefaultFont"):
