@@ -51,6 +51,7 @@ class Configuration():
     CFG_OVERVIEW_FONT_SIZE = "overview_font_size"
     CFG_DISPLAY_TIMEOUT = "display_timeout"
     CFG_DISPLAY_BRIGHTNESS = "display_brightness"
+    CFG_SENSOR_DATABASE = "sensor_database"
 
     def __init__(self):
         Configuration.load_configuration()

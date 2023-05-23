@@ -17,8 +17,7 @@
 # Icons
 # https://stackoverflow.com/questions/12306223/how-to-manually-create-icns-files-using-iconutil
 #
-
-
+import datetime
 from tkinter import VERTICAL
 from tkinter import Tk, Button, Label, Menu
 from tkinter import font
@@ -32,6 +31,7 @@ from tkmacos_utils import set_menubar_app_name
 from display_controller import DisplayController
 from sensor_utils import now_str
 from modal_dialog import ModalDialog
+from sensor_db import SensorDB
 import version
 
 
@@ -79,12 +79,15 @@ class SensorApp(Tk):
             self.geometry(geo)
             self.resizable(width=False, height=False)
 
+        # Start up the sensor data DB
+        self._sensor_db = SensorDB()
+
         # Start sensor data source
         if self._config[Configuration.CFG_USE_TEST_DATA].lower() == "true":
             from dummy_sensor_adapter import DummySensorAdapter as SensorThread
         else:
             from sensor_thread import SensorThread
-        self._sensor_data_source = SensorThread()
+        self._sensor_data_source = SensorThread(handle_sensor_data=self._handle_sensor_data)
         self._sensor_data_source.open()
 
         # Create menu
@@ -107,6 +110,9 @@ class SensorApp(Tk):
         self._display_controller.reset_count_down()
         self._count_down_time = 10
         self.after(self._count_down_time * 1000, self._update_backlight_controller)
+
+        # Set up the DB trimmer
+        self.after(60 * 1000, self._trim_sensor_db)
 
         # Capture events that reset the backlight timer
         # Only motion in the overview frame
@@ -163,6 +169,17 @@ class SensorApp(Tk):
         self._display_controller.count_down(self._count_down_time)
         self.after(10000, self._update_backlight_controller)
 
+    def _trim_sensor_db(self):
+        """
+        Every hour trim the sensor DB
+        :return:
+        """
+        now = datetime.datetime.now()
+        if now.minute == 0:
+            self._sensor_db.trim_sensor_data()
+        # Check again in a minute
+        self.after(60 * 1000, self._trim_sensor_db)
+
     def _reset_backlight_controller(self, event):
         self._display_controller.reset_count_down()
 
@@ -193,6 +210,17 @@ class SensorApp(Tk):
         self._menu_bar.entryconfig(self._time_of_day_label, label=f"{new_tod_label}")
         self._time_of_day_label = new_tod_label
         self.after(self._update_tod_interval, self._update_tod)
+
+    def _handle_sensor_data(self, mac, data):
+        """
+        Handle (log) a sensor data sample
+        :param mac: The mac of the sensor
+        :param data: A dict of sensor data keys and values
+        :return: None
+        """
+        # print(f"Handling data for mac: {mac}")
+        self._sensor_db.add_sensor(mac, data["name"])
+        self._sensor_db.add_sensor_data(mac, data)
 
     def _show_about(self):
         """

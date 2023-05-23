@@ -26,7 +26,8 @@ class SensorThread(Thread):
     It runs on its own thread because of the way that the ruuvitag-sensor
     module works.
     """
-    def __init__(self):
+    def __init__(self, handle_sensor_data=None):
+        self._handle_sensor_data = handle_sensor_data
         self._data_point_count = 0
         self._runflag = RunFlag()
         self._sensor_list = {}
@@ -95,6 +96,11 @@ class SensorThread(Thread):
             if self._temperature_format == "f":
                 data["temperature"] = to_fahrenheit(float(data["temperature"]))
             self._sensor_list[mac] = data
+
+            # Pass data sample to observer
+            if self._handle_sensor_data is not None:
+                self._handle_sensor_data(mac, data)
+
             self._pending_sensor_changes = True
             self._logger.debug(f"Data received from {mac}")
         except Exception as ex:

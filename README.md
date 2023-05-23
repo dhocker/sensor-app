@@ -77,12 +77,16 @@ The configuration file is composed of JSON and looks like this.
     "log_console": "true",
     "update_interval": 3.0,
     "temperature_format": "F",
-    "sensors_per_row": 5,
+    "sensors_per_row": 6,
     "offline_time": 600,
     "offline_color": "#ff3300",
     "low_battery_threshold": 1800,
     "low_battery_color": "#FFFF00",
-    "normal_background_color": "#66ffff"
+    "normal_background_color": "#66ffff",
+    "overview_font_size": 14,
+    "display_timeout": 600,
+    "display_brightness": 30,
+    "sensor_database": "sensor_db.sqlite3"
 }
 ```
 
@@ -104,6 +108,10 @@ Otherwise, your sensors will be shown with names derived from the last 4 digits 
 | low_battery_threshold   | Battery value that triggers a low battery warning                                              |
 | low_battery_color       | Color to mark sensor when a low battery condition is detected #rrggbb                          |
 | normal_background_color | Default/normal color for a sensor #rrggbb                                                      |
+| overview_font_size      | Size, in points, of the font used on the overview frame                                        | 
+| display_timeout         | The amount of time, in seconds, of inactivity before turning of display                        |
+| display_brightness      | Relative brightness of the display backlight, 0-100                                            |
+| sensor_database         | Full path to the sensor DB file                                                                |
 
 All colors are expressed in the format #rrggbb where r, g and b are hex numbers (0-F). For example #00FF00 is green.
 This is standard HTML color format.

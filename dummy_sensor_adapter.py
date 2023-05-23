@@ -30,9 +30,10 @@ class DummySensorAdapter:
     """
     This class serves as both a test dummy and a base class for sensor adapters.
     """
-    def __init__(self):
+    def __init__(self, handle_sensor_data=None):
+        self._handle_sensor_data = handle_sensor_data
         self._terminate = False
-        self._logger = logging.getLogger("sensor_monitor")
+        self._logger = logging.getLogger("sensor_app")
         self._list_lock = Lock()
         self._config = Configuration.get_configuration()
         self._dummy_ruuvi_data = {}
@@ -66,6 +67,11 @@ class DummySensorAdapter:
                 "rssi": -84,
                 "sequence": 1,
             }
+
+            # Notify observer
+            if self._handle_sensor_data is not None:
+                self._handle_sensor_data(mac, self._dummy_ruuvi_data[mac])
+                self._logger.debug(f"Dummy data generated for {mac}")
 
     def open(self):
         """
