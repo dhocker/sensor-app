@@ -79,7 +79,6 @@ class SensorDB:
             pressure real, \
             tx_power integer, \
             battery integer, \
-            rssi integer, \
             data_time timestamp, \
             PRIMARY KEY(id), \
             FOREIGN KEY (sensor_id) REFERENCES Sensors(id) ) \
@@ -182,11 +181,11 @@ class SensorDB:
             c = self._get_cursor(conn)
             c.execute(
                 "INSERT INTO SensorData ("
-                "sensor_id,format,temperature,humidity,pressure,tx_power,battery,rssi,data_time)"
-                "values ((SELECT id FROM Sensors WHERE mac=? LIMIT 1), ?, ?, ?, ?, ?, ?, ?, ?) ",
+                "sensor_id,format,temperature,humidity,pressure,tx_power,battery,data_time)"
+                "values ((SELECT id FROM Sensors WHERE mac=? LIMIT 1), ?, ?, ?, ?, ?, ?, ?) ",
                 (
                     mac, data["data_format"], data["temperature"], data["humidity"],
-                    data["pressure"], data["tx_power"], data["battery"], data["rssi"],
+                    data["pressure"], data["tx_power"], data["battery"],
                     data["timestamp"],
                 )
             )

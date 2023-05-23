@@ -64,7 +64,6 @@ class DummySensorAdapter:
                 "movement_counter": 43,
                 "measurement_sequence_number": 26017,
                 "mac": mac_str,
-                "rssi": -84,
                 "sequence": 1,
             }
 
