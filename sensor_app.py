@@ -174,11 +174,12 @@ class SensorApp(Tk):
         Every hour trim the sensor DB
         :return:
         """
+        # Check again in a minute
+        self.after(60 * 1000, self._trim_sensor_db)
+        # On the hour, trim the database
         now = datetime.datetime.now()
         if now.minute == 0:
             self._sensor_db.trim_sensor_data()
-        # Check again in a minute
-        self.after(60 * 1000, self._trim_sensor_db)
 
     def _reset_backlight_controller(self, event):
         self._display_controller.reset_count_down()
