@@ -33,9 +33,12 @@ class SensorWidget(LabelFrame):
         "humidity": {"label": "humid", "suffix": "%"}
     }
 
-    def __init__(self, parent, id, name, sensor_data):
+    def __init__(self, parent, id, name, sensor_data, on_selected=None):
         self._config = Configuration.get_configuration()
         self._lbl_font = font.Font(family="Arial", size=self._config[Configuration.CFG_OVERVIEW_FONT_SIZE])
+        self._selected_color = self._config[Configuration.CFG_SELECTED_BACKGROUND_COLOR]
+        self._on_selected = on_selected
+        self._selected = False
         self._bd = 6
         self._bg = self._determine_background_color(sensor_data)
 
@@ -47,7 +50,7 @@ class SensorWidget(LabelFrame):
                                            relief=tkinter.RIDGE)
 
         # Handle a click in the frame
-        self.bind("<Button-1>", self._show_details)
+        self.bind("<Button-1>", self._on_widget_selected)
 
         gr = 0
         self._sensor_labels = {}
@@ -55,14 +58,14 @@ class SensorWidget(LabelFrame):
         for data_value_key, data_value_props in SensorWidget._SENSOR_VALUE_KEYS.items():
             # Sensor value name and its value. Take a click on either label.
             label = Label(self, text=f"{data_value_props['label']}", font=self._lbl_font, bg=self._bg)
-            label.bind("<Button-1>", self._show_details)
+            label.bind("<Button-1>", self._on_widget_selected)
             label.grid(row=gr, column=0, sticky="W", padx=1, pady=1)
             self._sensor_labels[data_value_key] = label
 
             label = Label(self,
                           text=f"{sensor_data[data_value_key]:5.1f}{data_value_props['suffix']}",
                           font=self._lbl_font, bg=self._bg)
-            label.bind("<Button-1>", self._show_details)
+            label.bind("<Button-1>", self._on_widget_selected)
             label.grid(row=gr, column=1, sticky="E", padx=1, pady=1)
             self._sensor_value_labels[data_value_key] = label
 
@@ -74,12 +77,12 @@ class SensorWidget(LabelFrame):
         sec = delta.seconds
 
         label = Label(self, text=f"last", font=self._lbl_font, bg=self._bg)
-        label.bind("<Button-1>", self._show_details)
+        label.bind("<Button-1>", self._on_widget_selected)
         label.grid(row=gr, column=0, sticky="W", padx=1, pady=1)
         self._sensor_labels["last"] = label
 
         label = Label(self, text=f"{sec:d}s", font=self._lbl_font, bg=self._bg)
-        label.bind("<Button-1>", self._show_details)
+        label.bind("<Button-1>", self._on_widget_selected)
         label.grid(row=gr, column=1, sticky="E", padx=1, pady=1)
         self._sensor_value_labels["last"] = label
 
@@ -92,9 +95,13 @@ class SensorWidget(LabelFrame):
         """
         Apply all sensor checks to determine the background color of the widget
         :param sensor_data: Sensor data to be checked
-        :return:
+        :return: Calculated background color
         """
-        bg = self._config[Configuration.CFG_NORMAL_BACKGROUND_COLOR]
+        # The default background is based on the selected state
+        if self._selected:
+            bg = self._config[Configuration.CFG_SELECTED_BACKGROUND_COLOR]
+        else:
+            bg = self._config[Configuration.CFG_NORMAL_BACKGROUND_COLOR]
 
         # Time out check (elapsed time since last sensor data was received)
         dt = datetime.now() - sensor_data["timestamp"]
@@ -107,12 +114,31 @@ class SensorWidget(LabelFrame):
 
         return bg
 
-    def _show_details(self, event):
+    def _on_widget_selected(self, event):
         """
         Show all the current sensor readings
         :return:
         """
+        self._selected = not self._selected
+        # The callback takes precedence
+        if self._on_selected is not None:
+            self._on_selected(self, self._selected)
+        else:
+            self.update(self._sensor_data)
+    def show_details(self):
+        """
+        Show the sensor details for this widget
+        :return: None
+        """
         self._details_dlg = SensorDetailsDlg(self, self._name, self._sensor_data)
+
+    def select(self, selected=True):
+        """
+        Set the selection state of the widget
+        :param selected: True if the widget is to be selected
+        :return: None
+        """
+        self._selected = selected
 
     def update(self, sensor_data):
         """
@@ -140,3 +166,4 @@ class SensorWidget(LabelFrame):
 
         self._sensor_labels["last"].config(bg=bg)
         self._sensor_value_labels["last"].config(text=f"{sec:d}s")
+        self._sensor_value_labels["last"].config(bg=bg)

@@ -65,7 +65,8 @@ class SensorOverviewFrame(Frame):
         self.update_sensors()
 
     def _create_sensor_frame(self, mac, sensor_data):
-        sensor_frame = SensorWidget(self, mac, sensor_data["name"], sensor_data)
+        sensor_frame = SensorWidget(self, mac, sensor_data["name"], sensor_data,
+                                    on_selected=self._on_sensor_widget_selected)
         self._sensor_frames[mac] = sensor_frame
 
     def _create_sorted_mac_list(self, sensor_list):
@@ -83,6 +84,13 @@ class SensorOverviewFrame(Frame):
         result_list = dict(sorted_mac_list)
 
         return result_list
+
+    def _on_sensor_widget_selected(self, sensor_widget, widget_state):
+        # Unselect all but the newly selected widget
+        for mac, widget in self._sensor_frames.items():
+            if widget != sensor_widget:
+                widget.select(selected=False)
+        self.update_sensors()
 
     def update_sensors(self):
         """

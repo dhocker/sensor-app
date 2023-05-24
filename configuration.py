@@ -48,6 +48,7 @@ class Configuration():
     CFG_LOW_BATTERY_THRESHOLD = "low_battery_threshold"  # in mv, recommended 1800
     CFG_LOW_BATTERY_COLOR = "low_battery_color"
     CFG_NORMAL_BACKGROUND_COLOR = "normal_background_color"
+    CFG_SELECTED_BACKGROUND_COLOR = "selected_background_color"
     CFG_OVERVIEW_FONT_SIZE = "overview_font_size"
     CFG_DISPLAY_TIMEOUT = "display_timeout"
     CFG_DISPLAY_BRIGHTNESS = "display_brightness"
