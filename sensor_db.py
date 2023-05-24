@@ -270,7 +270,8 @@ class SensorDB:
         # TODO Can the connection be kept open to avoid this overhead on ever operation?
         # In the current design, a connection is opened and closed for each DB operation.
         # This may be effective enough. But, it may not.
-        conn = sqlite3.connect(self._db)
+        # TODO Make timeout value a config setting
+        conn = sqlite3.connect(self._db, timeout=10.0)
         # We use the row factory to get named row columns. Makes handling row sets easier.
         conn.row_factory = sqlite3.Row
         # The default string type is unicode. This changes it to UTF-8.
