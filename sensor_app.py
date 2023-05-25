@@ -144,6 +144,12 @@ class SensorApp(Tk):
         editmenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
         self._menu_bar.add_cascade(label="Edit", menu=editmenu)
 
+        viewmenu = Menu(self._menu_bar, tearoff=0, font=menu_font)
+        viewmenu.add_command(label="Sensor details", command=self._show_sensor_details)
+        viewmenu.add_command(label="Sensor history", command=self._show_sensor_history)
+        viewmenu.add_command(label="App stats", command=self._show_app_stats)
+        self._menu_bar.add_cascade(label="View", menu=viewmenu)
+
         # Non-macOS
         if self._gfx_platform in ["x11", "linux"]:
             # On macOS settings on the app menu. On all others, its on the edit menu
@@ -222,6 +228,15 @@ class SensorApp(Tk):
         # print(f"Handling data for mac: {mac}")
         self._sensor_db.add_sensor(mac, data["name"])
         self._sensor_db.add_sensor_data(mac, data)
+
+    def _show_sensor_details(self):
+        self._overview_frame.show_selected_sensor_details()
+
+    def _show_sensor_history(self):
+        pass
+
+    def _show_app_stats(self):
+        pass
 
     def _show_about(self):
         """

@@ -90,6 +90,10 @@ class SensorOverviewFrame(Frame):
         for mac, widget in self._sensor_frames.items():
             if widget != sensor_widget:
                 widget.select(selected=False)
+
+        # Remember the last selected widget
+        self._selected_sensor_widget = sensor_widget if widget_state else None
+
         self.update_sensors()
 
     def update_sensors(self):
@@ -138,3 +142,7 @@ class SensorOverviewFrame(Frame):
 
         # configuration setting
         self.after(self._update_interval, self.update_sensors)
+
+    def show_selected_sensor_details(self):
+        if self._selected_sensor_widget is not None:
+            self._selected_sensor_widget.show_details()
