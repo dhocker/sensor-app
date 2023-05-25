@@ -62,7 +62,7 @@ class SensorOverviewFrame(Frame):
 
     def _create_widgets(self, sw, sh):
         # Create initial set of sensor widgets
-        self.update_sensors()
+        self.scheduled_sensor_update()
 
     def _create_sensor_frame(self, mac, sensor_data):
         sensor_frame = SensorWidget(self, mac, sensor_data["name"], sensor_data,
@@ -95,6 +95,15 @@ class SensorOverviewFrame(Frame):
         self._selected_sensor_widget = sensor_widget if widget_state else None
 
         self.update_sensors()
+
+    def scheduled_sensor_update(self):
+        """
+        Update sensors periodically
+        :return: None
+        """
+        self.update_sensors()
+        # Configuration setting determines update frequency
+        self.after(self._update_interval, self.scheduled_sensor_update)
 
     def update_sensors(self):
         """
@@ -139,9 +148,6 @@ class SensorOverviewFrame(Frame):
 
         # Release the sensor list lock
         self._sensor_data_source.unlock_sensor_list()
-
-        # configuration setting
-        self.after(self._update_interval, self.update_sensors)
 
     def show_selected_sensor_details(self):
         if self._selected_sensor_widget is not None:
