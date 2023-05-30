@@ -28,6 +28,8 @@ class SensorDB:
         self._config = Configuration.get_configuration()
         self._logger = logging.getLogger("sensor_app")
         self._db = self._config[Configuration.CFG_SENSOR_DATABASE]
+        self._database_timeout = self._config[Configuration.CFG_DATABASE_TIMEOUT]
+        self._logger.debug(f"Database timout value: {self._database_timeout:f}")
         self._init_db()
 
     def _init_db(self):
@@ -271,7 +273,7 @@ class SensorDB:
         # In the current design, a connection is opened and closed for each DB operation.
         # This may be effective enough. But, it may not.
         # TODO Make timeout value a config setting
-        conn = sqlite3.connect(self._db, timeout=10.0)
+        conn = sqlite3.connect(self._db, timeout=self._database_timeout)
         # We use the row factory to get named row columns. Makes handling row sets easier.
         conn.row_factory = sqlite3.Row
         # The default string type is unicode. This changes it to UTF-8.

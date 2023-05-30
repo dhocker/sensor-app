@@ -53,6 +53,7 @@ class Configuration():
     CFG_DISPLAY_TIMEOUT = "display_timeout"
     CFG_DISPLAY_BRIGHTNESS = "display_brightness"
     CFG_SENSOR_DATABASE = "sensor_database"
+    CFG_DATABASE_TIMEOUT = "database_timeout"
 
     def __init__(self):
         Configuration.load_configuration()
