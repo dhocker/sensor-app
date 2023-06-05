@@ -52,6 +52,18 @@ to make later.
 ```shell
 mkvirtualenv -p python3 -r requirements.txt sensor-app3
 ```
+
+## Create a udev Rule for the Display Backlight
+This app uses the [rpi-backlight package](https://github.com/linusg/rpi-backlight) to control the display backlight. By default,
+manipulating the display backlight requires root privilege. To change that, you 
+need to install a udev rule. How to do this is described in the rpi-backlight
+[README file](https://github.com/linusg/rpi-backlight). For ease, use the following
+command to create and install the udev rule.
+
+```shell
+echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
+```
+
 ## Create a Configuration File
 sensor-app can be controlled through sensor_app.conf. Note that this file **is not**
 part of the GitHub repo. However, there is a sensor_app.example.conf file that
@@ -147,6 +159,9 @@ python sensor_app.py
 ```
 
 # Reference
+
+## rpi-backlight
+[rpi-backlight](https://github.com/linusg/rpi-backlight)
 
 ## RuuviTag Data
 [Format 5 Reference](https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_05.md)
