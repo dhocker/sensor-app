@@ -1,6 +1,6 @@
 *.pyc
 *.log
-sensor_db.sqlite3*
+sensor_db*.sqlite3*
 copy_to_*
 sensor_app.conf
 sensor_app.log*
