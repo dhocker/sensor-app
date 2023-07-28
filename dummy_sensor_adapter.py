@@ -17,7 +17,7 @@
 
 
 from time import sleep
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import logging
 import copy
@@ -37,6 +37,7 @@ class DummySensorAdapter:
         self._list_lock = Lock()
         self._config = Configuration.get_configuration()
         self._dummy_ruuvi_data = {}
+        random.seed()
 
         self._generate_ruuvi_data()
 
@@ -46,14 +47,12 @@ class DummySensorAdapter:
         :return:
         """
         for mac, kvn in self._config[Configuration.CFG_RUUVITAGS].items():
-            # The mac appears without semicolons in the tag data
-            mac_str = mac.replace(":", "")
             self._dummy_ruuvi_data[mac] = {
                 "name": kvn["name"],
-                "timestamp": datetime.now(),
+                "timestamp": self._random_timestamp(),
                 "data_format": 5,
-                "humidity": 54.94,
-                "temperature": to_fahrenheit(25.62),
+                "humidity": self._random_humid(),
+                "temperature": to_fahrenheit(self._random_temp()),
                 "pressure": 1008.72,
                 "acceleration": 1018.2416216203303,
                 "acceleration_x": -168,
@@ -63,7 +62,7 @@ class DummySensorAdapter:
                 "battery": 3027,
                 "movement_counter": 43,
                 "measurement_sequence_number": 26017,
-                "mac": mac_str,
+                "mac": mac,
                 "sequence": 1,
             }
 
@@ -71,6 +70,33 @@ class DummySensorAdapter:
             if self._handle_sensor_data is not None:
                 self._handle_sensor_data(mac, self._dummy_ruuvi_data[mac])
                 self._logger.debug(f"Dummy data generated for {mac}")
+
+    def _random_temp(self):
+        """
+        Generate a random temperature in C
+        :return:
+        """
+        r = random.random()
+        return r * 40.0
+
+    def _random_humid(self):
+        """
+        Generate a random humidity
+        :return:
+        """
+        r = random.random()
+        return r * 100.0
+
+    def _random_timestamp(self):
+        """
+        Generate a random timestamp 0-5 seconds old
+        :return: Generated timestamp
+        """
+        r = random.random() * 5.0
+        if r > 4.5:
+            r = 5.0
+        now = datetime.now() - timedelta(seconds=r)
+        return now
 
     def open(self):
         """

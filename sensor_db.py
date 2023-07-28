@@ -264,6 +264,36 @@ class SensorDB:
 
         return result
 
+    def get_sensor_history(self, mac):
+        """
+        Fetch all of the interesting sensor history
+        @param mac: The sensor of interest
+        @return: A list of dicts where each list item is a DB record
+        """
+        # Find the sensor ID
+        id = self._get_sensor_id(mac)
+
+        conn = None
+        result = None
+        try:
+            conn = self._get_connection()
+            c = self._get_cursor(conn)
+            rset = c.execute(
+                "SELECT temperature, humidity, data_time FROM SensorData WHERE sensor_id=:id",
+                {"id": id}
+            )
+            result = SensorDB._rows_to_dict_list(rset)
+            # Convert data_time from str to a datetime
+            for r in result:
+                r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S.%f")
+        except Exception as ex:
+            pass
+        finally:
+            # Make sure connection is closed
+            if conn is not None:
+                conn.close()
+        return result
+
     def _get_connection(self):
         """
         Return a database connection instance
@@ -290,3 +320,35 @@ class SensorDB:
         :return: A Cursor instance on the connection
         """
         return conn.cursor()
+
+    @classmethod
+    def _rows_to_dict_list(cls, rows):
+        """
+        Convert a list of SQLite rows to a list of dicts
+        :param rows: SQLite row set to be converted
+        :return:
+        """
+        dl = []
+        for row in rows.fetchall():
+            dl.append(cls._row_to_dict(row))
+        return dl
+
+    @classmethod
+    def _row_to_dict(cls, row):
+        """
+        Convert an SQLite row set to a dict
+        :param row: the row set to be converted
+        :return: a dict containing all of the columns in the row set
+        """
+        d = {}
+        for key in row.keys():
+            d[key] = row[key]
+        return d
+
+    @property
+    def _date_time_format(self):
+        """
+        Format of datetime stored as a timestamp
+        @return: Format string
+        """
+        return "%Y-%m-%d %H:%M:%S.%f"
