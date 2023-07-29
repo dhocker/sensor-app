@@ -71,7 +71,8 @@ class SensorFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self._on_close_frame)
 
         # Get number of cols from config
-        self._sizer = wx.GridSizer(self._config["sensors_per_row"], wx.Size(5, 5))
+        self._sizer_cols = int(self._config["sensors_per_row"])
+        self._sizer = wx.GridSizer(self._sizer_cols, wx.Size(5, 5))
 
         self.SetSizer(self._sizer)
 
@@ -186,6 +187,10 @@ class SensorFrame(wx.Frame):
 
         # Order widgets by name, reposition all widgets
         self._sizer.Clear()
+        rows = int(len(sorted_mac_list) / self._sizer_cols)
+        if (len(sorted_mac_list) % self._sizer_cols) > 0:
+            rows += 1
+        self._sizer.SetRows(rows)
         for mac in sorted_mac_list:
             self._sizer.Add(self._sensor_widgets[mac], 1,
                             flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP | wx.BOTTOM, border=5)
