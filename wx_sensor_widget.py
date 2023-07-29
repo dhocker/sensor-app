@@ -70,9 +70,9 @@ class SensorWidget(wx.StaticBox):
         self._widget_ctls["last"] = self._last
 
         # widget_sizer.Add(boxsizer)
-        widget_sizer.Add(self._temp, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
-        widget_sizer.Add(self._humid, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
-        widget_sizer.Add(self._last, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
+        widget_sizer.Add(self._temp, flag=wx.LEFT | wx.RIGHT, border=5)
+        widget_sizer.Add(self._humid, flag=wx.LEFT | wx.RIGHT, border=5)
+        widget_sizer.Add(self._last, flag=wx.LEFT | wx.RIGHT, border=5)
 
         self.SetSizer(widget_sizer)
 
