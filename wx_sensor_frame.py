@@ -49,8 +49,9 @@ class SensorFrame(wx.Frame):
         width = client_rect.width
         height = client_rect.height
         self._logger.info(f"Display size {width} x {height}")
-        if width > 720:
-            width = 720
+        # Limit size to RPi display panel
+        if width > 800:
+            width = 800
         if height > 480:
             height = 480
         self._logger.info(f"Adjusted frame size {width} x {height}")
