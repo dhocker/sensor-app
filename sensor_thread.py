@@ -85,6 +85,9 @@ class SensorThread(Thread):
             mac = received_data[0]
             data = received_data[1]
 
+            # Make sure the mac is the same. The one in the data is lowerdcase, no delimiters
+            data["mac"] = mac
+
             # Record when the data was received
             data["timestamp"] = datetime.now()
             # Replace with name entered by user or from config file
