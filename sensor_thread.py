@@ -85,7 +85,7 @@ class SensorThread(Thread):
             mac = received_data[0]
             data = received_data[1]
 
-            # Make sure the mac is the same. The one in the data is lowerdcase, no delimiters
+            # Make sure the mac is the same. The one in the data is lower case, no delimiters
             data["mac"] = mac
 
             # Record when the data was received
@@ -106,7 +106,7 @@ class SensorThread(Thread):
 
             self._pending_sensor_changes = True
             # TODO Disable for release
-            self._logger.debug(f"Data received from {mac} {data['mac']}")
+            # self._logger.debug(f"Data received from {mac} {data['mac']}")
         except Exception as ex:
             self._logger.error("Unhandled exception caught in SensorThread._receive_sensor_data()")
             self._logger.error(str(ex))
