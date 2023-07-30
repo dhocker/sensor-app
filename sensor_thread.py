@@ -102,7 +102,8 @@ class SensorThread(Thread):
                 self._handle_sensor_data(mac, data)
 
             self._pending_sensor_changes = True
-            # self._logger.debug(f"Data received from {mac}")
+            # TODO Disable for release
+            self._logger.debug(f"Data received from {mac} {data['mac']}")
         except Exception as ex:
             self._logger.error("Unhandled exception caught in SensorThread._receive_sensor_data()")
             self._logger.error(str(ex))
