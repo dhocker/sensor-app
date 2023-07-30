@@ -287,7 +287,8 @@ class SensorDB:
             for r in result:
                 r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S.%f")
         except Exception as ex:
-            pass
+            self._logger.error(f"Exception querying sensor history for {mac}")
+            self._logger.error(str(ex))
         finally:
             # Make sure connection is closed
             if conn is not None:
