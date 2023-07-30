@@ -261,10 +261,15 @@ class SensorFrame(wx.Frame):
         db = SensorDB()
         sensor_history = db.get_sensor_history(data["mac"])
 
-        # Determine relative time (in seconds) of each data point
-        start_time = sensor_history[0]["data_time"]
-        for r in sensor_history:
-            r["t"] = (r["data_time"] - start_time).seconds
+        if sensor_history is None or len(sensor_history) == 0:
+            show_info_message(self,
+                              f"No history data for sensor {data['name']} {data['mac']}",
+                              "View Sensor History")
+        else:
+            # Determine relative time (in seconds) of each data point
+            start_time = sensor_history[0]["data_time"]
+            for r in sensor_history:
+                r["t"] = (r["data_time"] - start_time).seconds
 
-        dlg = SensorHistoryDlg(self, data["name"], sensor_history)
-        dlg.ShowModal()
+            dlg = SensorHistoryDlg(self, data["name"], sensor_history)
+            dlg.ShowModal()
