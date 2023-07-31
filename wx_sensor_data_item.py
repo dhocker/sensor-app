@@ -33,13 +33,13 @@ class SensorDataItem(wx.Panel):
         self._box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self._label_widget = wx.StaticText(self, label=label, style=wx.ALIGN_LEFT)
-        self._box_sizer.Add(self._label_widget, flag=wx.ALIGN_TOP | wx.EXPAND, border=5)
+        self._box_sizer.Add(self._label_widget, flag=wx.EXPAND, border=5)
 
         # This inserts space between the label and the value causing them to left/right align
         self._box_sizer.AddStretchSpacer()
 
         self._value_widget = wx.StaticText(self, label=f"{value}", style=wx.ALIGN_RIGHT)
-        self._box_sizer.Add(self._value_widget, flag=wx.ALIGN_TOP | wx.EXPAND, border=5)
+        self._box_sizer.Add(self._value_widget, flag=wx.EXPAND, border=5)
 
         self.SetSizer(self._box_sizer)
 
