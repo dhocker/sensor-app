@@ -213,7 +213,7 @@ class SensorFrame(wx.Frame):
             self._sensor_widgets[mac].update(sensor_data)
 
         if refresh_req:
-            self.Refresh()
+            self._panel.Refresh(eraseBackground=True)
 
         # Release the sensor list lock
         self._sensor_data_source.unlock_sensor_list()
