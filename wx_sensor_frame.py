@@ -199,21 +199,20 @@ class SensorFrame(wx.Frame):
         sorted_mac_list = self._create_sorted_mac_list(sensor_list)
 
         # Order widgets by name, reposition all widgets
-        self._panel_sizer.Clear()
-        rows = int(len(sorted_mac_list) / self._sizer_cols)
-        if (len(sorted_mac_list) % self._sizer_cols) > 0:
-            rows += 1
-        self._panel_sizer.SetRows(rows)
-        for mac in sorted_mac_list:
-            self._panel_sizer.Add(self._sensor_widgets[mac], 1,
-                                  flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP | wx.BOTTOM, border=5)
+        if refresh_req:
+            self._panel_sizer.Clear()
+            rows = int(len(sorted_mac_list) / self._sizer_cols)
+            if (len(sorted_mac_list) % self._sizer_cols) > 0:
+                rows += 1
+            self._panel_sizer.SetRows(rows)
+            for mac in sorted_mac_list:
+                self._panel_sizer.Add(self._sensor_widgets[mac], 1,
+                                      flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP | wx.BOTTOM, border=5)
+            self._panel_sizer.Layout()
 
         # Update sensor data in each frame
         for mac, sensor_data in sensor_list.items():
             self._sensor_widgets[mac].update(sensor_data)
-
-        if refresh_req:
-            self._panel.Refresh(eraseBackground=True)
 
         # Release the sensor list lock
         self._sensor_data_source.unlock_sensor_list()
