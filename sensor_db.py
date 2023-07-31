@@ -285,7 +285,11 @@ class SensorDB:
             result = SensorDB._rows_to_dict_list(rset)
             # Convert data_time from str to a datetime
             for r in result:
-                r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S.%f")
+                # Cover case when timestamp has no fraction of a second
+                if "." in r["data_time"]:
+                    r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S.%f")
+                else:
+                    r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S")
         except Exception as ex:
             self._logger.error(f"Exception querying sensor history for {mac}")
             self._logger.error(str(ex))
