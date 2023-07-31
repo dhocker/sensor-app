@@ -23,6 +23,10 @@ from os.path import basename, join as joined
 
 
 class SensorFrame(wx.Frame):
+    """
+    The frame contains a single panel which in turn contains all of the
+    sensor widgets. The menubar is also part of the frame.
+    """
     SENSOR_UPDATE_TIMER_ID = 1
 
     def __init__(self, app_name="WX_Sensor_App",
@@ -73,13 +77,19 @@ class SensorFrame(wx.Frame):
 
         self._create_widgets()
 
+        # Create the panel that will hold the sensor widgets
+        self._panel = wx.Panel(self)
+        self._sizer = wx.BoxSizer(wx.VERTICAL)
+        self._sizer.Add(self._panel, 1, wx.EXPAND, 5)
+
         # Handle frame close via closer
         self.Bind(wx.EVT_CLOSE, self._on_close_frame)
 
         # Get number of cols from config
         self._sizer_cols = int(self._config["sensors_per_row"])
-        self._sizer = wx.GridSizer(self._sizer_cols, wx.Size(5, 5))
+        self._panel_sizer = wx.GridSizer(self._sizer_cols, wx.Size(5, 5))
 
+        self._panel.SetSizer(self._panel_sizer)
         self.SetSizer(self._sizer)
 
         # Start fielding sensor updates
@@ -153,7 +163,7 @@ class SensorFrame(wx.Frame):
         self._sensor_update_timer.Start(self._sensor_update_interval_ms)
 
     def _create_sensor_frame(self, mac, sensor_data):
-        sensor_frame = SensorWidget(self, mac, sensor_data["name"], sensor_data,
+        sensor_frame = SensorWidget(self._panel, mac, sensor_data["name"], sensor_data,
                                     on_selected=self._on_sensor_widget_selected)
         self._sensor_widgets[mac] = sensor_frame
 
@@ -194,14 +204,14 @@ class SensorFrame(wx.Frame):
         sorted_mac_list = self._create_sorted_mac_list(sensor_list)
 
         # Order widgets by name, reposition all widgets
-        self._sizer.Clear()
+        self._panel_sizer.Clear()
         rows = int(len(sorted_mac_list) / self._sizer_cols)
         if (len(sorted_mac_list) % self._sizer_cols) > 0:
             rows += 1
-        self._sizer.SetRows(rows)
+        self._panel_sizer.SetRows(rows)
         for mac in sorted_mac_list:
-            self._sizer.Add(self._sensor_widgets[mac], 1,
-                            flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP | wx.BOTTOM, border=5)
+            self._panel_sizer.Add(self._sensor_widgets[mac], 1,
+                                  flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP | wx.BOTTOM, border=5)
 
         # Update sensor data in each frame
         for mac, sensor_data in sensor_list.items():
