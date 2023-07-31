@@ -184,9 +184,11 @@ class SensorFrame(wx.Frame):
         sensor_list = self._sensor_data_source.lock_sensor_list()
 
         # Create newly discovered sensors
+        refresh_req = False
         for mac, sensor_data in sensor_list.items():
             if mac not in self._sensor_widgets.keys():
                 self._create_sensor_frame(mac, sensor_data)
+                refresh_req = True
 
         # Create an ordered list of sensor macs so we can display them alphabetically by name
         sorted_mac_list = self._create_sorted_mac_list(sensor_list)
@@ -204,6 +206,9 @@ class SensorFrame(wx.Frame):
         # Update sensor data in each frame
         for mac, sensor_data in sensor_list.items():
             self._sensor_widgets[mac].update(sensor_data)
+
+        if refresh_req:
+            self.Refresh()
 
         # Release the sensor list lock
         self._sensor_data_source.unlock_sensor_list()
