@@ -30,6 +30,9 @@ class SensorDataSourceHandler:
         self._sensor_data_source = None
 
     def open_data_source(self):
+        # Trim aged data records
+        self._sensor_db.trim_sensor_data()
+
         # Start sensor data source
         if self._config[Configuration.CFG_USE_TEST_DATA].lower() == "true":
             from dummy_sensor_adapter import DummySensorAdapter as SensorThread

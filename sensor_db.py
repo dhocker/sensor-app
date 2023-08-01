@@ -48,9 +48,6 @@ class SensorDB:
         # Seed Sensors table with all known sensors
         self._seed_sensors()
 
-        # Trim aged data records
-        self.trim_sensor_data()
-
     def _create_database(self):
         """
         Create a new sensor DB
