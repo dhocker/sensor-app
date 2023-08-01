@@ -281,7 +281,8 @@ class SensorFrame(wx.Frame):
             # Determine relative time (in seconds) of each data point
             start_time = sensor_history[0]["data_time"]
             for r in sensor_history:
-                r["t"] = (r["data_time"] - start_time).seconds
+                dt = r["data_time"] - start_time
+                r["t"] = (dt.days * 3600 * 24) + dt.seconds
 
             dlg = SensorHistoryDlg(self, data["name"], sensor_history)
             dlg.ShowModal()
