@@ -269,6 +269,7 @@ class SensorFrame(wx.Frame):
         data = self._selected_sensor_widget.current_sensor_data
         db = SensorDB()
         dlg = wx.GenericProgressDialog(f"Sensor History", f"Querying database...")
+        dlg.Pulse("Querying database...")
         sensor_history = db.get_sensor_history(data["mac"])
         dlg.Destroy()
 
