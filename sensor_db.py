@@ -261,10 +261,11 @@ class SensorDB:
 
         return result
 
-    def get_sensor_history(self, mac):
+    def get_sensor_history(self, mac, progress_dlg=None):
         """
         Fetch all of the interesting sensor history
         @param mac: The sensor of interest
+        @param progress_dlg: Optional progress dialog for reporting query progress
         @return: A list of dicts where each list item is a DB record
         """
         # Find the sensor ID
@@ -273,20 +274,29 @@ class SensorDB:
         conn = None
         result = None
         try:
+            if progress_dlg is not None:
+                progress_dlg.pulse(f"Querying history for {mac}")
             conn = self._get_connection()
             c = self._get_cursor(conn)
             rset = c.execute(
                 "SELECT temperature, humidity, data_time FROM SensorData WHERE sensor_id=:id",
                 {"id": id}
             )
+            if progress_dlg is not None:
+                progress_dlg.pulse(f"Converting result rows to dictionary {mac}")
             result = SensorDB._rows_to_dict_list(rset)
             # Convert data_time from str to a datetime
+            row_counter = 0
             for r in result:
+                if row_counter % 100 == 0:
+                    if progress_dlg is not None:
+                        progress_dlg.pulse(f"Converting record {row_counter}/{len(result)} {mac}")
                 # Cover case when timestamp has no fraction of a second
                 if "." in r["data_time"]:
                     r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S.%f")
                 else:
                     r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S")
+                row_counter += 1
         except Exception as ex:
             self._logger.error(f"Exception querying sensor history for {mac}")
             self._logger.error(str(ex))

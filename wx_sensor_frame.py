@@ -270,7 +270,7 @@ class SensorFrame(wx.Frame):
         db = SensorDB()
         dlg = wx.GenericProgressDialog(f"Sensor History", f"Querying database...")
         dlg.Pulse("Querying database...")
-        sensor_history = db.get_sensor_history(data["mac"])
+        sensor_history = db.get_sensor_history(data["mac"], progress_dlg=dlg)
         dlg.Destroy()
 
         if sensor_history is None or len(sensor_history) == 0:
