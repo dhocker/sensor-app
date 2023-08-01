@@ -275,7 +275,7 @@ class SensorDB:
         result = None
         try:
             if progress_dlg is not None:
-                progress_dlg.pulse(f"Querying history for {mac}")
+                progress_dlg.Pulse(f"Querying history for {mac}")
             conn = self._get_connection()
             c = self._get_cursor(conn)
             rset = c.execute(
@@ -283,14 +283,14 @@ class SensorDB:
                 {"id": id}
             )
             if progress_dlg is not None:
-                progress_dlg.pulse(f"Converting result rows to dictionary {mac}")
+                progress_dlg.Pulse(f"Converting result rows to dictionary {mac}")
             result = SensorDB._rows_to_dict_list(rset)
             # Convert data_time from str to a datetime
             row_counter = 0
             for r in result:
                 if row_counter % 100 == 0:
                     if progress_dlg is not None:
-                        progress_dlg.pulse(f"Converting record {row_counter}/{len(result)} {mac}")
+                        progress_dlg.Pulse(f"Converting record {row_counter}/{len(result)} {mac}")
                 # Cover case when timestamp has no fraction of a second
                 if "." in r["data_time"]:
                     r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S.%f")
