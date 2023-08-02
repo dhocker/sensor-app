@@ -306,7 +306,7 @@ class SensorFrame(wx.Frame):
             start_time = sensor_history[0]["data_time"]
             for r in sensor_history:
                 dt = r["data_time"] - start_time
-                r["t"] = (dt.days * 3600 * 24) + dt.seconds
+                r["t"] = float((dt.days * 3600.0 * 24.0) + dt.seconds) / 3600.0
 
             dlg = SensorHistoryDlg(self, data["name"], sensor_history)
             dlg.ShowModal()
