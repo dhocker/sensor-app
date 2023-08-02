@@ -82,9 +82,9 @@ class SensorHistoryDlg(wx.Dialog):
         widget_sizer.Add(plot_canvas, 1, wx.EXPAND | wx.ALL, 10)
 
         # Display time range
-        start_time = sensor_data[0]['data_time'].strftime("%H:%M:%S")
-        end_time = sensor_data[last_data_point]['data_time'].strftime("%H:%M:%S")
-        text = f"Start: {start_time}  End: {end_time}"
+        start_time = sensor_data[0]['data_time'].strftime("%Y-%m-%d %H:%M:%S")
+        end_time = sensor_data[last_data_point]['data_time'].strftime("%Y-%m-%d %H:%M:%S")
+        text = f"Start: {start_time}\t\t\t\t\t\t\tEnd: {end_time}"
         range_widget = wx.StaticText(self, label=f"{text}", style=wx.ALIGN_LEFT)
         widget_sizer.Add(range_widget,
                          flag=wx.ALIGN_TOP | wx.TOP | wx.BOTTOM | wx.LEFT | wx.RIGHT | wx.EXPAND,
