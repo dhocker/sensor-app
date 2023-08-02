@@ -9,6 +9,7 @@
 #
 
 
+import datetime
 import logging
 from configuration import Configuration
 from wx_utils import show_info_message, show_error_message
@@ -28,6 +29,7 @@ class SensorFrame(wx.Frame):
     sensor widgets. The menubar is also part of the frame.
     """
     SENSOR_UPDATE_TIMER_ID = 1
+    TRIM_DB_TIMER_ID = 2
 
     def __init__(self, app_name="WX_Sensor_App",
                  app_title="WX Sensor Monitor Ap",
@@ -88,7 +90,16 @@ class SensorFrame(wx.Frame):
         self.SetSizer(self._sizer)
 
         # Start fielding sensor updates
-        self._scheduled_sensor_update(None)
+        self._sensor_update_timer = wx.Timer(self, SensorFrame.SENSOR_UPDATE_TIMER_ID)
+        self._sensor_update_timer.Start(self._sensor_update_interval_ms, oneShot=wx.TIMER_CONTINUOUS)
+        self._update_sensors()
+
+        # Start trimming DB
+        self._trim_db_timer = wx.Timer(self, SensorFrame.TRIM_DB_TIMER_ID)
+        self._trim_db_timer.Start(60 * 1000, oneShot=wx.TIMER_CONTINUOUS)  # every minute
+
+        # Handle all timer events
+        self.Bind(wx.EVT_TIMER, self._route_timer_events)
 
     def _create_widgets(self):
         self._create_menubar()
@@ -145,17 +156,30 @@ class SensorFrame(wx.Frame):
             # TODO Create Help/About menu/item for other OSes
             pass
 
-    def _scheduled_sensor_update(self, evt):
+    def _route_timer_events(self, evt):
         """
-        Update sensors periodically
-        :return: None
+        Route timer events to their respective handlers
+        @param evt:
+        @return:
         """
-        self._update_sensors()
-        # Configuration setting determines update frequency
-        # self.after(self._update_interval, self.scheduled_sensor_update)
-        self._sensor_update_timer = wx.Timer(self, SensorFrame.SENSOR_UPDATE_TIMER_ID)
-        self.Bind(wx.EVT_TIMER, self._scheduled_sensor_update)
-        self._sensor_update_timer.Start(self._sensor_update_interval_ms)
+        timer_id = evt.Id
+        if timer_id == SensorFrame.SENSOR_UPDATE_TIMER_ID:
+            self._update_sensors()
+        elif timer_id == SensorFrame.TRIM_DB_TIMER_ID:
+            self._trim_sensor_db()
+
+    def _trim_sensor_db(self):
+        """
+        Every hour trim the sensor DB
+        :return:
+        """
+        self._logger.debug("Checking for DB trim")
+        # On the hour, trim the database
+        now = datetime.datetime.now()
+        if now.minute == 0:
+            self._logger.debug("Starting DB trimming")
+            db = SensorDB()
+            db.trim_sensor_data()
 
     def _create_sensor_frame(self, mac, sensor_data):
         sensor_frame = SensorWidget(self._panel, mac, sensor_data["name"], sensor_data,
