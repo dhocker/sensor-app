@@ -99,10 +99,10 @@ class SensorHistoryDlg(wx.Dialog):
                     min_value = v
                 if v > max_value:
                     max_value = v
-        value_min_max = SensorDataItem(self, f"Min: {min_value:5.1f}", f"Max: {max_value:5.1f}")
-        widget_sizer.Add(value_min_max,
-                         flag=wx.ALIGN_TOP | wx.TOP | wx.BOTTOM | wx.LEFT | wx.RIGHT | wx.EXPAND,
-                         border=5)
+            value_min_max = SensorDataItem(self, f"Min: {min_value:5.1f}", f"Max: {max_value:5.1f}")
+            widget_sizer.Add(value_min_max,
+                             flag=wx.ALIGN_TOP | wx.TOP | wx.BOTTOM | wx.LEFT | wx.RIGHT | wx.EXPAND,
+                             border=5)
 
         # Space the dialog so the button is at the bottom
         widget_sizer.AddStretchSpacer()
