@@ -290,7 +290,7 @@ class SensorDB:
             for r in result:
                 if row_counter % 100 == 0:
                     if progress_dlg is not None:
-                        progress_dlg.Pulse(f"Converting record {row_counter}/{len(result)} {mac}")
+                        progress_dlg.Pulse(f"Processing record {row_counter} of {len(result)}")
                 # Cover case when timestamp has no fraction of a second
                 if "." in r["data_time"]:
                     r["data_time"] = datetime.datetime.strptime(r["data_time"], "%Y-%m-%d %H:%M:%S.%f")
