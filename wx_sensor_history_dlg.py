@@ -15,6 +15,7 @@
 
 import wx
 from wx.lib import plot as wxplot
+from wx_sensor_data_item import SensorDataItem
 
 
 class SensorHistoryDlg(wx.Dialog):
@@ -84,9 +85,8 @@ class SensorHistoryDlg(wx.Dialog):
         # Display time range
         start_time = sensor_data[0]['data_time'].strftime("%Y-%m-%d %H:%M:%S")
         end_time = sensor_data[last_data_point]['data_time'].strftime("%Y-%m-%d %H:%M:%S")
-        text = f"Start: {start_time}\t\t\t\t\t\t\tEnd: {end_time}"
-        range_widget = wx.StaticText(self, label=f"{text}", style=wx.ALIGN_LEFT)
-        widget_sizer.Add(range_widget,
+        time_range = SensorDataItem(self, start_time, end_time)
+        widget_sizer.Add(time_range,
                          flag=wx.ALIGN_TOP | wx.TOP | wx.BOTTOM | wx.LEFT | wx.RIGHT | wx.EXPAND,
                          border=10)
 
