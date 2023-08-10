@@ -45,6 +45,7 @@ class SensorFrame(wx.Frame):
         self._sensor_data_source = data_source
         self._logger = logging.getLogger("sensor_app")
         self._sensor_widgets = {}
+        self._selected_sensor_widget = None
 
         self._config = Configuration.get_configuration()
         self._sensor_update_interval_ms = int(self._config[Configuration.CFG_UPDATE_INTERVAL] * 1000)
@@ -290,6 +291,13 @@ class SensorFrame(wx.Frame):
         dlg.ShowModal()
 
     def _show_sensor_history(self, evt):
+        # A sensor must be selected
+        if self._selected_sensor_widget is None:
+            show_error_message(self,
+                               "No sensor is selected",
+                               "View Sensor History")
+            return
+
         data = self._selected_sensor_widget.current_sensor_data
         db = SensorDB()
         dlg = wx.GenericProgressDialog(f"Sensor History", f"Querying database...")
