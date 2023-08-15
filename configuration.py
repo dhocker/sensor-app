@@ -33,7 +33,7 @@ class Configuration():
     _active_config = None
 
     # Keys
-    CFG_RUUVITAGS = "ruuvitags"
+    CFG_RUUVITAGS = "ruuvitags"  # Use only for test mode
     CFG_DEBUG_SENSORS = "debug_sensors"
     CFG_LOG_LEVEL = "log_level"
     CFG_LOG_CONSOLE = "log_console"

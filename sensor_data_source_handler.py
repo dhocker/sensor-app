@@ -50,7 +50,9 @@ class SensorDataSourceHandler:
         :return: None
         """
         # print(f"Handling data for mac: {mac}")
-        self._sensor_db.add_sensor(mac, data["name"])
+        sensor_rec = self._sensor_db.add_sensor(mac)
+        # Add the sensor name to the sensor data
+        data["name"] = sensor_rec["name"]
         self._sensor_db.add_sensor_data(mac, data)
 
     def close_data_source(self):

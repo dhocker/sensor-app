@@ -45,9 +45,6 @@ class SensorDB:
             self._create_database()
             self._logger.info("Created database file: %s", self._db)
 
-        # Seed Sensors table with all known sensors
-        self._seed_sensors()
-
     def _create_database(self):
         """
         Create a new sensor DB
@@ -87,22 +84,6 @@ class SensorDB:
 
         conn.close()
 
-    def _seed_sensors(self):
-        """
-        Seed the sensor table with sensors defined in the config file
-        :return: None
-        """
-        for mac in self._config[Configuration.CFG_RUUVITAGS].keys():
-            sensor_id = self._get_sensor_id(mac)
-            name = self._config[Configuration.CFG_RUUVITAGS][mac]["name"]
-            if sensor_id is None:
-                self.add_sensor(mac, name)
-                self._logger.info("Added sensor to Sensors: %s", mac)
-            else:
-                # Update the sensor's name. DO NOT delete the record id.
-                self.update_sensor_name(sensor_id, name)
-                self._logger.info("Updated existing sensor: %s %s", mac, name)
-
     def update_sensor_name(self, sensor_id, name):
         """
         Update the sensor name for an existing sensor
@@ -130,41 +111,43 @@ class SensorDB:
             if conn is not None:
                 conn.close()
 
-    def add_sensor(self, mac, name):
+    def add_sensor(self, mac):
         """
         Add a sensor to the Sensors table
         :param mac: The sensor's mac
-        :param name: The sensor's name (maybe from the config file)
-        :return: The record id of the inserted record
+        :return: The inserted record
         """
         # If the mac is already registered update the name and return the id
-        id = self._get_sensor_id(mac)
-        if id is not None:
-            self.update_sensor_name(id, name)
-            return id
+        sensor_rec = self._get_sensor_record(mac)
+        if sensor_rec is not None:
+            # self.update_sensor_name(id, "N/A")
+            return sensor_rec
 
         # Since this mac has not been registered, add it to the table
+        # Use the sensors dialog to set the name
         conn = None
         try:
             conn = self._get_connection()
             c = self._get_cursor(conn)
             c.execute(
-                "INSERT INTO Sensors (mac,name) values (?, ?)", (mac, name, )
+                "INSERT INTO Sensors (mac,name) values (?, ?)", (mac, "N/A", )
             )
             conn.commit()
 
-            # Get id of inserted record
-            id = c.lastrowid
+            # Return inserted record
+            sensor_rec = {}
+            sensor_rec["id"] = c.lastrowid
+            sensor_rec["name"] = "N/A"
         except Exception as ex:
             # Should fail on duplicate mac
             self._logger.error(str(ex))
-            id = None
+            sensor_rec = None
         finally:
             # Make sure connection is closed
             if conn is not None:
                 conn.close()
 
-        return id
+        return sensor_rec
 
     def add_sensor_data(self, mac, data):
         """
@@ -236,7 +219,7 @@ class SensorDB:
 
         conn.close()
 
-    def _get_sensor_id(self, mac):
+    def _get_sensor_record(self, mac):
         """
         Return the Sensor id for a sensor identified by mac
         :param mac: The sensor's mac
@@ -248,10 +231,10 @@ class SensorDB:
             conn = self._get_connection()
             c = self._get_cursor(conn)
             rset = c.execute(
-                "SELECT id FROM Sensors WHERE mac=:mac",
+                "SELECT id, name FROM Sensors WHERE mac=:mac",
                 {"mac": mac}
             )
-            result = rset.fetchone()["id"]
+            result = rset.fetchone()
         except Exception as ex:
             pass
         finally:
@@ -268,8 +251,8 @@ class SensorDB:
         @param progress_dlg: Optional progress dialog for reporting query progress
         @return: A list of dicts where each list item is a DB record
         """
-        # Find the sensor ID
-        id = self._get_sensor_id(mac)
+        # Find the sensor record for this sensor
+        sensor_rec = self._get_sensor_record(mac)
 
         conn = None
         result = None
@@ -280,7 +263,7 @@ class SensorDB:
             c = self._get_cursor(conn)
             rset = c.execute(
                 "SELECT temperature, humidity, data_time FROM SensorData WHERE sensor_id=:id",
-                {"id": id}
+                {"id": sensor_rec["id"]}
             )
             if progress_dlg is not None:
                 progress_dlg.Pulse(f"Converting result rows to dictionary {mac}")

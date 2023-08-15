@@ -38,7 +38,6 @@ class SensorThread(Thread):
 
         # Get access to the ruuvitags configuration (mac to name)
         self._config = Configuration.get_configuration()
-        self._ruuvitags = self._config[Configuration.CFG_RUUVITAGS]
         self._temperature_format = self._config[Configuration.CFG_TEMPERATURE_FORMAT].lower()
 
     def open(self):
@@ -90,11 +89,6 @@ class SensorThread(Thread):
 
             # Record when the data was received
             data["timestamp"] = datetime.now()
-            # Replace with name entered by user or from config file
-            if mac in self._ruuvitags.keys():
-                data["name"] = self._ruuvitags[mac]["name"]
-            else:
-                data["name"] = mac
             # Convert temperature as required
             if self._temperature_format == "f":
                 data["temperature"] = to_fahrenheit(float(data["temperature"]))
