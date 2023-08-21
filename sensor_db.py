@@ -77,8 +77,9 @@ class SensorDB:
             battery integer, \
             data_time timestamp, \
             PRIMARY KEY(id), \
-            FOREIGN KEY (sensor_id) REFERENCES Sensors(id) ) \
-            "
+            CONSTRAINT fk_sensors \
+                FOREIGN KEY (sensor_id) REFERENCES Sensors(id) ON DELETE CASCADE \
+            )"
         )
         conn.commit()
 
@@ -243,6 +244,80 @@ class SensorDB:
                 conn.close()
 
         return result
+
+    def get_all_sensor_records(self):
+        """
+        Return all sensor records
+        :return: A list of sensor table records
+        """
+        conn = None
+        result = None
+        try:
+            conn = self._get_connection()
+            c = self._get_cursor(conn)
+            rset = c.execute(
+                "SELECT * FROM Sensors"
+            )
+            result = SensorDB._rows_to_dict_list(rset)
+        except Exception as ex:
+            pass
+        finally:
+            # Make sure connection is closed
+            if conn is not None:
+                conn.close()
+
+        return result
+
+    def delete_sensor_record(self, id):
+        """
+        Delete a sensor table record
+        :@param Record id to be deleted
+        :return: A list of sensor table records
+        """
+        conn = None
+
+        # Note that because of foreign key constraints all sensor data
+        # records must be deleted before the sensor record can be deleted
+        try:
+            conn = self._get_connection()
+            c = self._get_cursor(conn)
+            c.execute(
+                "DELETE FROM Sensors WHERE id=:id",
+                {"id": id}
+            )
+            conn.commit()
+        except Exception as ex:
+            self._logger.error(f"Exception while deleting sensor ID {id}")
+            self._logger.error(str(ex))
+        finally:
+            # Make sure connection is closed
+            if conn is not None:
+                conn.close()
+
+    def update_sensor_record(self, id, name):
+        """
+        Delete a sensor table record
+        :@param id: ID of record to be updated
+        :@param name: New sensor name
+        :return: None
+        """
+        conn = None
+
+        try:
+            conn = self._get_connection()
+            c = self._get_cursor(conn)
+            c.execute(
+                "UPDATE Sensors SET name=:name WHERE id=:id",
+                {"name": name, "id": id}
+            )
+            conn.commit()
+        except Exception as ex:
+            self._logger.error(f"Exception while updating sensor ID {id}")
+            self._logger.error(str(ex))
+        finally:
+            # Make sure connection is closed
+            if conn is not None:
+                conn.close()
 
     def get_sensor_history(self, mac, progress_dlg=None):
         """

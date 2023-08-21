@@ -17,6 +17,7 @@ import wx
 from wx_sensor_widget import SensorWidget
 from wx_sensor_details_dlg import SensorDetailsDlg
 from wx_sensor_history_dlg import SensorHistoryDlg
+from wx_sensor_names_dlg import SensorNamesDlg
 from sensor_db import SensorDB
 
 # import standard libraries
@@ -115,20 +116,22 @@ class SensorFrame(wx.Frame):
 
         #   File Menu
         self._file_menu = wx.Menu()
-        self._file_menu.Append(4, "&Close", "Quit")
-        self.Bind(wx.EVT_MENU, self._on_close_frame, id=4)
+        self._file_menu.Append(1, "&Close", "Quit")
+        self.Bind(wx.EVT_MENU, self._on_close_frame, id=1)
 
         # PLace holder edit menu
         self._edit_menu = wx.Menu()
+        self._edit_menu.Append(10, "&Sensor names", "Sensor names")
+        self.Bind(wx.EVT_MENU, self._edit_sensor_names, id=10)
 
         # TODO Sensor views
         self._view_menu = wx.Menu()
-        self._view_menu.Append(1, "Sensor &details", "Sensor details")
-        self.Bind(wx.EVT_MENU, self._show_selected_sensor_details, id=1)
-        self._view_menu.Append(2, "Sensor &history", "Sensor history")
-        self.Bind(wx.EVT_MENU, self._show_sensor_history, id=2)
-        self._view_menu.Append(3, "&App stats", "App stats")
-        self.Bind(wx.EVT_MENU, None, id=3)
+        self._view_menu.Append(20, "Sensor &details", "Sensor details")
+        self.Bind(wx.EVT_MENU, self._show_selected_sensor_details, id=20)
+        self._view_menu.Append(21, "Sensor &history", "Sensor history")
+        self.Bind(wx.EVT_MENU, self._show_sensor_history, id=21)
+        # self._view_menu.Append(22, "&Sensor names", "Sensor names")
+        # self.Bind(wx.EVT_MENU, self._edit_sensor_names, id=22)
 
         # Complete the menu bar
         self._frame_menubar.Append(self._file_menu, "&File")
@@ -318,3 +321,14 @@ class SensorFrame(wx.Frame):
 
             dlg = SensorHistoryDlg(self, data["name"], sensor_history)
             dlg.ShowModal()
+
+    def _edit_sensor_names(self, evt):
+        dlg = SensorNamesDlg(self)
+        dlg.ShowModal()
+
+        # Refresh sensor display to show changed names and deletions
+        # Currently, this does not remove deleted sensors from the display
+        self._panel_sizer.Clear(delete_windows=True)
+        self._panel_sizer.Layout()
+        self._sensor_widgets = {}
+        self._update_sensors()

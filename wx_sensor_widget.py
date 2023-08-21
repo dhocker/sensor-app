@@ -110,6 +110,9 @@ class SensorWidget(wx.StaticBox):
         # self._name.SetLabel(sensor_data["name"])
         self.SetBackgroundColour(bg)
 
+        # Update box label
+        self.SetLabel(sensor_data["name"])
+
         # Update sensor values
         for data_key, data_props in SensorWidget._SENSOR_VALUE_KEYS.items():
             self._widget_ctls[data_key].set_value(f"{sensor_data[data_key]:5.1f}{data_props['suffix']}")
