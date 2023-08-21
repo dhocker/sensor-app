@@ -20,6 +20,8 @@ import wx
 
 
 class SensorDataItem(wx.Panel):
+    BORDER_WIDTH = 3
+
     def __init__(self, parent, label, value):
         """
         Create a sensor data item widget. The data item has a label and a value.
@@ -33,13 +35,15 @@ class SensorDataItem(wx.Panel):
         self._box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self._label_widget = wx.StaticText(self, label=label, style=wx.ALIGN_LEFT)
-        self._box_sizer.Add(self._label_widget, flag=wx.EXPAND, border=5)
+        self._box_sizer.Add(self._label_widget,
+                            flag=wx.ALL | wx.EXPAND, border=self.BORDER_WIDTH)
 
         # This inserts space between the label and the value causing them to left/right align
         self._box_sizer.AddStretchSpacer()
 
         self._value_widget = wx.StaticText(self, label=f"{value}", style=wx.ALIGN_RIGHT)
-        self._box_sizer.Add(self._value_widget, flag=wx.EXPAND, border=5)
+        self._box_sizer.Add(self._value_widget,
+                            flag=wx.ALL | wx.EXPAND, border=self.BORDER_WIDTH)
 
         self.SetSizer(self._box_sizer)
 
