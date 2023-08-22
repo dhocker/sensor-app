@@ -331,4 +331,5 @@ class SensorFrame(wx.Frame):
         self._panel_sizer.Clear(delete_windows=True)
         self._panel_sizer.Layout()
         self._sensor_widgets = {}
+        self._sensor_data_source.reset_sensor_list()
         self._update_sensors()

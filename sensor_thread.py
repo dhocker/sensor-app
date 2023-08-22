@@ -1,6 +1,6 @@
 #
 # sensor_thread.py - RuuviTag sensor data collection
-# Copyright © 2022 Dave Hocker
+# Copyright © 2022, 2023 Dave Hocker
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@ class SensorThread(Thread):
         self._handle_sensor_data = handle_sensor_data
         self._data_point_count = 0
         self._runflag = RunFlag()
-        self._sensor_list = {}
-        self._list_lock = Lock()
-        self._pending_sensor_changes = False
         self._logger = logging.getLogger("sensor_app")
         super().__init__()
 
@@ -77,7 +74,6 @@ class SensorThread(Thread):
         Reference: https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_05.md
         :return:
         """
-        self._list_lock.acquire()
         try:
             self._data_point_count += 1
 
@@ -92,20 +88,18 @@ class SensorThread(Thread):
             # Convert temperature as required
             if self._temperature_format == "f":
                 data["temperature"] = to_fahrenheit(float(data["temperature"]))
-            self._sensor_list[mac] = data
 
-            # Pass data sample to observer
+            # Pass data sample to receiver/observer
             if self._handle_sensor_data is not None:
                 self._handle_sensor_data(mac, data)
 
-            self._pending_sensor_changes = True
             # TODO Disable for release
             # self._logger.debug(f"Data received from {mac} {data['mac']}")
         except Exception as ex:
             self._logger.error("Unhandled exception caught in SensorThread._receive_sensor_data()")
             self._logger.error(str(ex))
         finally:
-            self._list_lock.release()
+            pass
 
     def print_sensor_data(self, mac, data, dump_json=False):
         # Format lines to be printed/logged
@@ -134,44 +128,6 @@ class SensorThread(Thread):
             print(dumps(data, indent=4))
         print('.......')
         print('Press Ctrl+C to quit.\n\r\n\r')
-
-    @property
-    def pending_changes(self):
-        """
-        Answers the question: Is there unhandled sensor data
-        :return: Returns True if there are pending sensor data changes
-        """
-        self._list_lock.acquire()
-        c = self._pending_sensor_changes
-        self._pending_sensor_changes = False
-        self._list_lock.release()
-        return c
-
-    @property
-    def sensor_list(self):
-        """
-        Return the sensor list. Note that this should be treated as read-only data.
-        The list should be locked before accessing the data.
-        Returns: The current sensor list. The sensor list is a dict whose
-        key is the RuuviTag mac and the data is what the RuuviTagSensor module returned.
-        The data is also a dict containing all the sensors properties.
-        """
-        return self._sensor_list
-
-    def lock_sensor_list(self):
-        """
-        Acquire the list lock
-        :return: Locked sensor list
-        """
-        self._list_lock.acquire()
-        return self._sensor_list
-
-    def unlock_sensor_list(self):
-        """
-        Release the list lock
-        :return:
-        """
-        self._list_lock.release()
 
     def terminate(self):
         """
