@@ -56,6 +56,11 @@ class SensorWidget(wx.StaticBox):
         self._on_selected_callback = on_selected
 
         # TODO Find a better way to highlight/display the sensor name
+        # Change the wight of the base font to bold
+        font = self.GetFont()
+        font.Weight = wx.FONTWEIGHT_BOLD
+        self.SetFont(font)
+
         # self._name = wx.StaticText(self, label=name, style=wx.ALIGN_CENTER_HORIZONTAL)
         widget_sizer = wx.BoxSizer(wx.VERTICAL)
 
