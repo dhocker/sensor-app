@@ -289,11 +289,23 @@ class SensorFrame(wx.Frame):
         show_info_message(self, "Settings/preferences is not implemented", "Settings/Preferences")
 
     def _show_selected_sensor_details(self, evt):
+        """
+        Show the sensor details dialog. This is a list of the values
+        from the last received data point.
+        :param evt: Not used
+        :return: None
+        """
         data = self._selected_sensor_widget.current_sensor_data
         dlg = SensorDetailsDlg(self, data)
         dlg.ShowModal()
 
     def _show_sensor_history(self, evt):
+        """
+        Show the sensor history dialog. This is a graph of the last
+        24 hours of sensor temperature data points.
+        :param evt: Not used
+        :return: None
+        """
         # A sensor must be selected
         if self._selected_sensor_widget is None:
             show_error_message(self,
@@ -323,6 +335,11 @@ class SensorFrame(wx.Frame):
             dlg.ShowModal()
 
     def _edit_sensor_names(self, evt):
+        """
+        Show the Edit Sensor Names dialog
+        :param evt: Not used
+        :return: None
+        """
         dlg = SensorNamesDlg(self)
         dlg.ShowModal()
 
