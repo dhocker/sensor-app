@@ -71,7 +71,7 @@ class SensorWidget(wx.StaticBox):
         self._widget_ctls["humidity"] = self._humid
 
         last = SensorWidget._last_data_time(sensor_data['timestamp'])
-        self._last = SensorDataItem(self, "last", f"{last:d}s")
+        self._last = SensorDataItem(self, "last", f"{last:3d}s")
         self._widget_ctls["last"] = self._last
 
         # widget_sizer.Add(boxsizer)
@@ -124,7 +124,7 @@ class SensorWidget(wx.StaticBox):
 
         # Elapsed time since last data
         last = SensorWidget._last_data_time(sensor_data["timestamp"])
-        self._last.set_value(f"{last}s")
+        self._last.set_value(f"{last:3d}s")
 
     @property
     def current_sensor_data(self):
