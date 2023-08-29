@@ -33,8 +33,18 @@ class SensorHistoryDlg(wx.Dialog):
         # Layout
         border_width = 10
         half_border_width = int(border_width / 2)
-        dlg_width = 600 + (border_width * 2)
-        dlg_height = 450
+
+        display = wx.Display()
+        client_rect = display.GetClientArea()
+        width = client_rect.width
+        height = client_rect.height
+        if width > 600:
+            width = 600
+        if height > 450:
+            height = 450
+            
+        dlg_width = width + (border_width * 2)
+        dlg_height = height
         gr_width = dlg_width - 10
         gr_height = int(dlg_height * .85)
         last_data_point = len(sensor_data) - 1
@@ -42,6 +52,7 @@ class SensorHistoryDlg(wx.Dialog):
         super().__init__(parent,
                          title=f"{name} Sensor History",
                          size=wx.Size(dlg_width, dlg_height))
+        self.Center()
 
         widget_sizer = wx.BoxSizer(wx.VERTICAL)
 
