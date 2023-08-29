@@ -341,12 +341,13 @@ class SensorFrame(wx.Frame):
         :return: None
         """
         dlg = SensorNamesDlg(self)
-        dlg.ShowModal()
+        result = dlg.ShowModal()
 
-        # Refresh sensor display to show changed names and deletions
-        # Currently, this does not remove deleted sensors from the display
-        self._panel_sizer.Clear(delete_windows=True)
-        self._panel_sizer.Layout()
-        self._sensor_widgets = {}
-        self._sensor_data_source.reset_sensor_list()
-        self._update_sensors()
+        if result == SensorNamesDlg.RESULT_SAVE:
+            # Refresh sensor display to show changed names and deletions
+            # Currently, this does not remove deleted sensors from the display
+            self._panel_sizer.Clear(delete_windows=True)
+            self._panel_sizer.Layout()
+            self._sensor_widgets = {}
+            self._sensor_data_source.reset_sensor_list()
+            self._update_sensors()

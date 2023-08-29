@@ -21,6 +21,9 @@ class SensorNamesDlg(wx.Dialog):
     """
     A custom dialog for displaying/editing sensor names
     """
+    RESULT_SAVE = 1
+    RESULT_CANCEL = 2
+
     def __init__(self, parent):
         """
         Create the sensor names dialog box
@@ -181,7 +184,7 @@ class SensorNamesDlg(wx.Dialog):
 
         del db
 
-        self.Close()
+        self.EndModal(SensorNamesDlg.RESULT_SAVE)
 
     def _on_cancel(self, evt):
         """
@@ -190,7 +193,7 @@ class SensorNamesDlg(wx.Dialog):
         @return: None
         """
         self._logger.info("Sensor list editing canceled")
-        self.Close()
+        self.EndModal(SensorNamesDlg.RESULT_CANCEL)
 
     def _on_delete(self, evt):
         """
