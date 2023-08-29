@@ -38,6 +38,7 @@ class SensorNamesDlg(wx.Dialog):
                          style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE,
                          title=f"Sensor Names",
                          size=wx.Size(dlg_width, dlg_height))
+        self.Center()
 
         # Add a panel so it looks the correct on all platforms
         self._dlg_panel = wx.Panel(self, wx.ID_ANY)

@@ -42,7 +42,7 @@ class SensorHistoryDlg(wx.Dialog):
             width = 600
         if height > 450:
             height = 450
-            
+
         dlg_width = width + (border_width * 2)
         dlg_height = height
         gr_width = dlg_width - 10

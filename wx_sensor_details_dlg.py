@@ -37,6 +37,7 @@ class SensorDetailsDlg(wx.Dialog):
         super().__init__(parent,
                          title=f"{sensor_data['name']} Sensor Details",
                          size=wx.Size(dlg_width, dlg_height))
+        self.Center()
 
         widget_sizer = wx.BoxSizer(wx.VERTICAL)
 
