@@ -64,6 +64,9 @@ class SensorNamesDlg(wx.Dialog):
 
         self._dlg_panel.SetSizer(self._dlg_panel_sizer)
 
+        # Catch ESC
+        self.Bind(wx.EVT_CHAR_HOOK, self._on_escape)
+
     def _create_sensor_list(self):
         """
         Create a flex grid list of sensors
@@ -194,6 +197,16 @@ class SensorNamesDlg(wx.Dialog):
         """
         self._logger.info("Sensor list editing canceled")
         self.EndModal(SensorNamesDlg.RESULT_CANCEL)
+
+    def _on_escape(self, evt):
+        """
+        Treat the ESC key like the Cancel button
+        :param evt: Key event
+        :return: None
+        """
+        if evt.GetKeyCode() == wx.WXK_ESCAPE:
+            self._on_cancel(evt)
+            evt.Skip()
 
     def _on_delete(self, evt):
         """

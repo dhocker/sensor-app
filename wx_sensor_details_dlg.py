@@ -65,6 +65,9 @@ class SensorDetailsDlg(wx.Dialog):
         # Catch the OK button
         self.Bind(wx.EVT_BUTTON, self._on_ok)
 
+        # Catch ESC
+        self.Bind(wx.EVT_CHAR_HOOK, self._on_escape)
+
     def _on_ok(self, evt):
         """
         Close the dialog
@@ -72,6 +75,16 @@ class SensorDetailsDlg(wx.Dialog):
         @return: None
         """
         self.Close()
+
+    def _on_escape(self, evt):
+        """
+        Treat the ESC key like the OK button
+        :param evt: Key event
+        :return: None
+        """
+        if evt.GetKeyCode() == wx.WXK_ESCAPE:
+            self._on_ok(evt)
+            evt.Skip()
 
 
 # class SensorDetailsDlgOG(wx.Dialog):
