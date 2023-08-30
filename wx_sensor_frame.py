@@ -103,6 +103,9 @@ class SensorFrame(wx.Frame):
         # Handle all timer events
         self.Bind(wx.EVT_TIMER, self._route_timer_events)
 
+        # Capture clicks inside the container panel
+        self._panel.Bind(wx.EVT_LEFT_UP, self._on_click)
+
     def _create_widgets(self):
         self._create_menubar()
 
@@ -171,6 +174,22 @@ class SensorFrame(wx.Frame):
             self._update_sensors()
         elif timer_id == SensorFrame.TRIM_DB_TIMER_ID:
             self._trim_sensor_db()
+
+    def _on_click(self, evt):
+        """
+        Left button clicked inside the container panel
+        :param evt: Not used
+        :return: None
+        """
+        # Unselect all
+        # In the future we might need multi-select, but for now we only do single select
+        for mac, widget in self._sensor_widgets.items():
+            widget.select(selected=False)
+
+        # Remember the last selected widget
+        self._selected_sensor_widget = None
+
+        self._update_sensors()
 
     def _trim_sensor_db(self):
         """
