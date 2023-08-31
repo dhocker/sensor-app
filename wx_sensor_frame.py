@@ -19,6 +19,7 @@ from wx_sensor_details_dlg import SensorDetailsDlg
 from wx_sensor_history_dlg import SensorHistoryDlg
 from wx_sensor_names_dlg import SensorNamesDlg
 from sensor_db import SensorDB
+from wx_sensor_history import show_sensor_history
 
 # import standard libraries
 from os.path import basename, join as joined
@@ -332,26 +333,7 @@ class SensorFrame(wx.Frame):
                                "View Sensor History")
             return
 
-        data = self._selected_sensor_widget.current_sensor_data
-        db = SensorDB()
-        dlg = wx.GenericProgressDialog(f"Sensor History", f"Querying database...")
-        dlg.Pulse("Querying database...")
-        sensor_history = db.get_sensor_history(data["mac"], progress_dlg=dlg)
-        dlg.Destroy()
-
-        if sensor_history is None or len(sensor_history) == 0:
-            show_info_message(self,
-                              f"No history data for sensor {data['name']} {data['mac']}",
-                              "View Sensor History")
-        else:
-            # Determine relative time (in seconds) of each data point
-            start_time = sensor_history[0]["data_time"]
-            for r in sensor_history:
-                dt = r["data_time"] - start_time
-                r["t"] = float((dt.days * 3600.0 * 24.0) + dt.seconds) / 3600.0
-
-            dlg = SensorHistoryDlg(self, data["name"], sensor_history)
-            dlg.ShowModal()
+        show_sensor_history(self._selected_sensor_widget)
 
     def _edit_sensor_names(self, evt):
         """

@@ -21,6 +21,7 @@ import wx
 # from sensor_details_dlg import SensorDetailsDlg
 from configuration import Configuration
 from wx_sensor_data_item import SensorDataItem
+from wx_widget_popup_menu import WidgetPopupMenu
 
 
 class SensorWidget(wx.StaticBox):
@@ -82,11 +83,10 @@ class SensorWidget(wx.StaticBox):
         self.SetSizer(widget_sizer)
 
         # Capture clicks on the widget
-        self.Bind(wx.EVT_LEFT_UP, self._on_click)
+        self.Bind(wx.EVT_LEFT_UP, self._on_left_click)
+        self.Bind(wx.EVT_RIGHT_UP, self._on_right_click)
 
-        print("Widget created")
-
-    def _on_click(self, evt):
+    def _on_left_click(self, evt):
         """
         Handle a click on the widget
         @param evt: Not used
@@ -96,6 +96,15 @@ class SensorWidget(wx.StaticBox):
         self.update(self._last_sensor_data)
         if self._on_selected_callback is not None:
             self._on_selected_callback(self, self._selected)
+
+    def _on_right_click(self, evt):
+        """
+        On right click show the popup context menu
+        :param evt: Noe used
+        :return: None
+        """
+        popup = WidgetPopupMenu(self)
+        self.PopupMenu(popup, evt.GetPosition())
 
     def select(self, selected=False):
         if self._selected != selected:
