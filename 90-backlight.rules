@@ -1,0 +1,3 @@
+# Copy this file to /etc/udev/rules.d/90-backlight.rules
+# Open permissions on backlight control
+SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"
