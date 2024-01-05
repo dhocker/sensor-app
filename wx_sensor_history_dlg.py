@@ -146,3 +146,6 @@ class SensorHistoryDlg(wx.Dialog):
         if evt.GetKeyCode() == wx.WXK_ESCAPE:
             self._on_ok(evt)
             evt.Skip()
+        else:
+            # Continue handling the key
+            evt.Skip(True)

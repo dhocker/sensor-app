@@ -207,6 +207,9 @@ class SensorNamesDlg(wx.Dialog):
         if evt.GetKeyCode() == wx.WXK_ESCAPE:
             self._on_cancel(evt)
             evt.Skip()
+        else:
+            # Continue handling the key
+            evt.Skip(True)
 
     def _on_delete(self, evt):
         """
