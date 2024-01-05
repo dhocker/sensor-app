@@ -118,27 +118,40 @@ class SensorDB:
         :param mac: The sensor's mac
         :return: The inserted record
         """
+        # Try to use config file to determine sensor name
+        if mac in self._config[Configuration.CFG_RUUVITAGS]:
+            name = self._config[Configuration.CFG_RUUVITAGS][mac]["name"]
+        else:
+            name = "N/A"
+
         # If the mac is already registered update the name and return the id
         sensor_rec = self._get_sensor_record(mac)
         if sensor_rec is not None:
-            # self.update_sensor_name(id, "N/A")
+            # If the current sensor record name does not match the config, update it
+            if sensor_rec["name"] != name:
+                if mac in self._config[Configuration.CFG_RUUVITAGS]:
+                    self.update_sensor_name(sensor_rec["id"], name)
+                    self._logger.info(f"Updated sensor id {sensor_rec['id']} from {sensor_rec['name']} to {name}")
+                    sensor_rec = self._get_sensor_record(mac)
             return sensor_rec
 
         # Since this mac has not been registered, add it to the table
-        # Use the sensors dialog to set the name
+        # Prefer to use the DB, then the config file, for the sensor's name
         conn = None
         try:
             conn = self._get_connection()
             c = self._get_cursor(conn)
             c.execute(
-                "INSERT INTO Sensors (mac,name) values (?, ?)", (mac, "N/A", )
+                "INSERT INTO Sensors (mac,name) values (?, ?)", (mac, name, )
             )
             conn.commit()
 
             # Return inserted record
-            sensor_rec = {}
-            sensor_rec["id"] = c.lastrowid
-            sensor_rec["name"] = "N/A"
+            sensor_rec = {
+                "id": c.lastrowid,
+                "mac": mac,
+                "name": name
+            }
         except Exception as ex:
             # Should fail on duplicate mac
             self._logger.error(str(ex))
@@ -232,7 +245,7 @@ class SensorDB:
             conn = self._get_connection()
             c = self._get_cursor(conn)
             rset = c.execute(
-                "SELECT id, name FROM Sensors WHERE mac=:mac",
+                "SELECT id, mac, name FROM Sensors WHERE mac=:mac",
                 {"mac": mac}
             )
             result = rset.fetchone()
