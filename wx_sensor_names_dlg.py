@@ -15,6 +15,7 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 from wx_utils import show_info_message
 from sensor_db import SensorDB
+from configuration import Configuration
 
 
 class SensorNamesDlg(wx.Dialog):
@@ -30,6 +31,7 @@ class SensorNamesDlg(wx.Dialog):
         @param parent: Parent of the dialog (usually a wx.Frame or wx.Window)
         """
         self._logger = logging.getLogger("sensor_app")
+        self._config = Configuration.get_configuration()
 
         # Layout
         self._border_width = 3
@@ -120,7 +122,7 @@ class SensorNamesDlg(wx.Dialog):
         sizer.Add(name_widget, flag=wx.EXPAND | wx.ALL, border=self._border_width)
 
         # Accumulate a list of sensor IDs and their respective text control
-        self._sensor_widgets.append({"id": id, "name_widget": name_widget})
+        self._sensor_widgets.append({"id": id, "mac": mac, "name_widget": name_widget})
 
         delete_button = wx.Button(parent, int(id), label="Delete")
         sizer.Add(delete_button, flag=wx.EXPAND | wx.ALL, border=self._border_width)
@@ -181,9 +183,13 @@ class SensorNamesDlg(wx.Dialog):
 
         db = SensorDB()
 
+        # Update the sensor table and the config file
         for s in self._sensor_widgets:
             new_name = s["name_widget"].GetValue()
             db.update_sensor_record(s["id"], new_name)
+            self._config[Configuration.CFG_RUUVITAGS][s["mac"]] = {"name": new_name}
+
+        Configuration.save_configuration()
 
         del db
 
