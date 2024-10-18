@@ -71,6 +71,9 @@ class SensorWidget(wx.StaticBox):
         self._humid = SensorDataItem(self, "humid", f"{sensor_data['humidity']:5.1f}%")
         self._widget_ctls["humidity"] = self._humid
 
+        self._battery = SensorDataItem(self, "battery", f"{sensor_data['battery']/1000.0:5.4f}%")
+        self._widget_ctls["battery"] = self._battery
+
         last = SensorWidget._last_data_time(sensor_data['timestamp'])
         self._last = SensorDataItem(self, "last", f"{last:3d}s")
         self._widget_ctls["last"] = self._last
@@ -78,6 +81,7 @@ class SensorWidget(wx.StaticBox):
         # widget_sizer.Add(boxsizer)
         widget_sizer.Add(self._temp, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
         widget_sizer.Add(self._humid, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
+        widget_sizer.Add(self._battery, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
         widget_sizer.Add(self._last, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
 
         self.SetSizer(widget_sizer)
