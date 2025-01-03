@@ -71,7 +71,7 @@ class SensorWidget(wx.StaticBox):
         self._humid = SensorDataItem(self, "humid", f"{sensor_data['humidity']:5.1f}%")
         self._widget_ctls["humidity"] = self._humid
 
-        # Battery balue is milli-volts. Format to volts.
+        # Battery value is milli-volts. Format to volts.
         bat_mv = float(sensor_data['battery'])/1000.0
         self._battery = SensorDataItem(self, "battery", f"{bat_mv:5.3f}v")
         self._widget_ctls["battery"] = self._battery
