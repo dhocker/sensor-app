@@ -54,3 +54,5 @@ class SensorDataItem(wx.Panel):
         @return: None
         """
         self._value_widget.SetLabel(value)
+        # Run Layout to account for changes in value size
+        self._box_sizer.Layout()

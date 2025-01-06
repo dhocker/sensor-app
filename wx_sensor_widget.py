@@ -80,11 +80,16 @@ class SensorWidget(wx.StaticBox):
         self._last = SensorDataItem(self, "last", f"{last:3d}s")
         self._widget_ctls["last"] = self._last
 
+        # Status indicator
+        self._status = SensorDataItem(self, "status", "N/A")
+        self._widget_ctls["status"] = self._status
+
         # widget_sizer.Add(boxsizer)
         widget_sizer.Add(self._temp, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
         widget_sizer.Add(self._humid, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
         widget_sizer.Add(self._battery, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
         widget_sizer.Add(self._last, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
+        widget_sizer.Add(self._status, flag=wx.LEFT | wx.RIGHT | wx.EXPAND, border=5)
 
         self.SetSizer(widget_sizer)
 
@@ -141,6 +146,10 @@ class SensorWidget(wx.StaticBox):
         last = SensorWidget._last_data_time(sensor_data["timestamp"])
         self._last.set_value(f"{last:3d}s")
 
+        # Update status indicator
+        status = self._determine_status(sensor_data)
+        self._status.set_value(status)
+
     @property
     def current_sensor_data(self):
         return self._last_sensor_data
@@ -167,6 +176,29 @@ class SensorWidget(wx.StaticBox):
             bg = self._config[Configuration.CFG_LOW_BATTERY_COLOR]
 
         return bg
+
+    def _determine_status(self, sensor_data):
+        """
+        Apply all sensor checks to determine the status of the sensor.
+        :param sensor_data: Sensor data to be checked
+        :return: Human readable status
+        """
+        # The default background is based on the selected state
+        if self._selected:
+            status = "Selected"
+        else:
+            status = "OnLine"
+
+        # Time out check (elapsed time since last sensor data was received)
+        dt = datetime.now() - sensor_data["timestamp"]
+        if dt.seconds >= self._config[Configuration.CFG_OFFLINE_TIME]:
+            status = "OFFLINE"
+
+        # Low battery check
+        if sensor_data["battery"] <= self._config[Configuration.CFG_LOW_BATTERY_THRESHOLD]:
+            status = "LOWBATT"
+
+        return status
 
     @staticmethod
     def _last_data_time(last_timestamp):
