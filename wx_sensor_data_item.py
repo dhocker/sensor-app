@@ -31,6 +31,7 @@ class SensorDataItem(wx.Panel):
         @param value: Data item value (should be a string).
         """
         super().__init__(parent)
+        self._parent = parent
 
         self._box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -47,6 +48,9 @@ class SensorDataItem(wx.Panel):
 
         self.SetSizer(self._box_sizer)
 
+        self.Bind(wx.EVT_LEFT_UP, self._on_left_click)
+        self.Bind(wx.EVT_RIGHT_UP, self._on_right_click)
+
     def set_value(self, value):
         """
         Update the value of the sensor data item (which is a StaticText box.
@@ -56,3 +60,19 @@ class SensorDataItem(wx.Panel):
         self._value_widget.SetLabel(value)
         # Run Layout to account for changes in value size
         self._box_sizer.Layout()
+
+    def _on_left_click(self, evt):
+        """
+        Forward left click to parent
+        :param evt: Not used
+        :return: None
+        """
+        self._parent.on_left_click(evt)
+
+    def _on_right_click(self, evt):
+        """
+        Forward right click to parent
+        :param evt: Not used
+        :return: None
+        """
+        self._parent.on_right_click(evt)

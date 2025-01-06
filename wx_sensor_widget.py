@@ -94,10 +94,10 @@ class SensorWidget(wx.StaticBox):
         self.SetSizer(widget_sizer)
 
         # Capture clicks on the widget
-        self.Bind(wx.EVT_LEFT_UP, self._on_left_click)
-        self.Bind(wx.EVT_RIGHT_UP, self._on_right_click)
+        self.Bind(wx.EVT_LEFT_UP, self.on_left_click)
+        self.Bind(wx.EVT_RIGHT_UP, self.on_right_click)
 
-    def _on_left_click(self, evt):
+    def on_left_click(self, evt):
         """
         Handle a click on the widget
         @param evt: Not used
@@ -108,7 +108,7 @@ class SensorWidget(wx.StaticBox):
         if self._on_selected_callback is not None:
             self._on_selected_callback(self, self._selected)
 
-    def _on_right_click(self, evt):
+    def on_right_click(self, evt):
         """
         On right click show the popup context menu
         :param evt: Noe used
