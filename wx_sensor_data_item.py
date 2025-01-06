@@ -49,7 +49,12 @@ class SensorDataItem(wx.Panel):
         self.SetSizer(self._box_sizer)
 
         self.Bind(wx.EVT_LEFT_UP, self._on_left_click)
+        self._label_widget.Bind(wx.EVT_LEFT_UP, self._on_left_click)
+        self._value_widget.Bind(wx.EVT_LEFT_UP, self._on_left_click)
+
         self.Bind(wx.EVT_RIGHT_UP, self._on_right_click)
+        self._label_widget.Bind(wx.EVT_RIGHT_UP, self._on_right_click)
+        self._value_widget.Bind(wx.EVT_RIGHT_UP, self._on_right_click)
 
     def set_value(self, value):
         """
