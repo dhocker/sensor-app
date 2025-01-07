@@ -146,6 +146,10 @@ class SensorWidget(wx.StaticBox):
         last = SensorWidget._last_data_time(sensor_data["timestamp"])
         self._last.set_value(f"{last:3d}s")
 
+        # Update battery voltage
+        bat_mv = float(sensor_data['battery'])/1000.0
+        self._battery.set_value(f"{bat_mv:5.3f}v")
+
         # Update status indicator
         status = self._determine_status(sensor_data)
         self._status.set_value(status)
