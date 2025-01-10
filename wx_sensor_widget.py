@@ -189,18 +189,18 @@ class SensorWidget(wx.StaticBox):
         """
         # The default background is based on the selected state
         if self._selected:
-            status = "Selected"
+            status = "Select"
         else:
             status = "OnLine"
 
         # Time out check (elapsed time since last sensor data was received)
         dt = datetime.now() - sensor_data["timestamp"]
         if dt.seconds >= self._config[Configuration.CFG_OFFLINE_TIME]:
-            status = "OFFLINE"
+            status = "OFF"
 
         # Low battery check
         if sensor_data["battery"] <= self._config[Configuration.CFG_LOW_BATTERY_THRESHOLD]:
-            status = "LOWBATT"
+            status = "LBATT"
 
         return status
 
