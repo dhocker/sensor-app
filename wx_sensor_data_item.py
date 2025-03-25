@@ -36,6 +36,7 @@ class SensorDataItem(wx.Panel):
         self._box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self._label_widget = wx.StaticText(self, label=label, style=wx.ALIGN_LEFT)
+        self._label_widget.SetForegroundColour(wx.Colour(0,0,0))
         self._box_sizer.Add(self._label_widget,
                             flag=wx.ALL | wx.EXPAND, border=self.BORDER_WIDTH)
 
@@ -43,6 +44,7 @@ class SensorDataItem(wx.Panel):
         self._box_sizer.AddStretchSpacer()
 
         self._value_widget = wx.StaticText(self, label=f"{value}", style=wx.ALIGN_RIGHT)
+        self._value_widget.SetForegroundColour(wx.Colour(0,0,0))
         self._box_sizer.Add(self._value_widget,
                             flag=wx.ALL | wx.EXPAND, border=self.BORDER_WIDTH)
 
